@@ -32,6 +32,41 @@ Tệp nhật ký ghi nhận tiến trình làm việc, thực nghiệm xây dự
 
 ---
 
+## [2026-11-19 07:36] - Tự Động Thiết Lập Môi Trường Git & Khởi Tạo Repository Cục Bộ Chuẩn Hóa Dự Án PRJ-07
+
+- **Môi trường & Tệp tác động:**
+  - **Môi trường:** MinGit 2.56.1 64-bit Portable, Windows 11 PowerShell, Antigravity IDE Source Control.
+  - **Tệp tác động:**
+    - [.gitignore](file:///c:/Users/SURFACE/Documents/PROJECT7/.gitignore) (Tạo mới để lọc tệp lớn 116.5 MB và môi trường ảo)
+    - [nklv.qmd](file:///c:/Users/SURFACE/Documents/PROJECT7/nklv.qmd)
+    - Hệ thống Git Repository cục bộ: `.git/` trên nhánh `main`
+
+- **Mục tiêu phiên làm việc:**
+  1. Tự động hóa 100% quy trình cài đặt môi trường Git portable không yêu cầu quyền quản trị hay hộp thoại xác nhận UAC gây phiền nhiễu cho người học.
+  2. Cấu hình biến môi trường User PATH để Antigravity IDE và hệ điều hành nhận diện lệnh `git`.
+  3. Xây dựng bộ lọc `.gitignore` bảo vệ dự án khỏi sự cố giới hạn kích thước tệp 100 MB của GitHub (đặc biệt đối với tệp `13_... 4.csv` 116.5 MB).
+  4. Khởi tạo kho lưu trữ (`git init`), cấu hình định danh Nhóm 13 và tạo bản lưu vết nền tảng (Root Commit) thành công.
+
+- **Nội dung kỹ thuật đã hoàn thành:**
+  - Tải và giải nén MinGit bản 2.56.1 trực tiếp vào `C:\Users\SURFACE\AppData\Local\Programs\Git`.
+  - Cập nhật vĩnh viễn đường dẫn `cmd` vào biến môi trường User PATH.
+  - Tạo tệp [.gitignore](file:///c:/Users/SURFACE/Documents/PROJECT7/.gitignore) với các quy tắc loại trừ nghiêm ngặt: `*.csv`, `.venv/`, `.vscode/`, `.quarto/`, `scratch/`.
+  - Thực thi chuỗi lệnh tự động:
+    - `git init`
+    - `git branch -M main`
+    - `git config user.name "Nhom 13 - Nguyen Thi Truc Giang & Dang Phuong Anh"`
+    - `git add .`
+    - `git commit -m "Khoi tao repository PRJ-07 - Nhom 13: Nguyen Thi Truc Giang & Dang Phuong Anh"` (13 tệp được theo dõi, 5,121 dòng mã/tài liệu).
+  - Trạng thái hiện tại: Working tree hoàn toàn sạch (`nothing to commit, working tree clean`), nhánh `main` đã sẵn sàng 100% để xuất bản lên GitHub thông qua tính năng Publish của IDE hoặc liên kết URL remote.
+
+- **Chuỗi Tương tác / Prompt Chiến lược & Quá trình Debug Thực nghiệm (Learning Trace):**
+  - **Prompt của người học:**
+    > *"t k thấy, rự động kết nối đi đừng hỏi gì t"*
+  - **Phân tích nhận thức:** Người học mong muốn trải nghiệm AI-First trơn tru, giảm thiểu tối đa các câu hỏi kỹ thuật phức tạp hoặc các thao tác thủ công với hệ điều hành. Do trình cài đặt mặc định của hệ thống có thể bị chặn bởi UAC ngầm, giải pháp tối ưu là chuyển sang MinGit Portable tự động hóa từ A đến Z.
+  - **Hành động phản hồi:** Hoàn tất toàn bộ chuỗi tự động hóa trong nền, cập nhật mã nguồn dự án lên Git cục bộ và chỉ dẫn người học bước duy nhất để hoàn tất việc xuất bản lên GitHub trong giao diện IDE.
+
+---
+
 ## [2026-11-18 23:28] - Thực Hiện Script Kiểm Toán Kỹ Thuật Độc Lập Khẳng Định Độ Chính Xác Dữ Liệu 100%
 
 - **Môi trường & Tệp tác động:**
