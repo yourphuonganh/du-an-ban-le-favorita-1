@@ -32,6 +32,26 @@ Tệp nhật ký ghi nhận tiến trình làm việc, thực nghiệm xây dự
 
 ---
 
+## [2026-11-19 07:50] - Cấu Hình Trực Tiếp git.path Cho Antigravity IDE Settings
+
+- **Môi trường & Tệp tác động:**
+  - **Môi trường:** Antigravity IDE User Settings, Workspace Settings.
+  - **Tệp tác động:**
+    - [.vscode/settings.json](file:///c:/Users/SURFACE/Documents/PROJECT7/.vscode/settings.json)
+    - `C:\Users\SURFACE\AppData\Roaming\Antigravity IDE\User\settings.json`
+    - [nklv.qmd](file:///c:/Users/SURFACE/Documents/PROJECT7/nklv.qmd)
+
+- **Mục tiêu phiên làm việc:**
+  1. Khắc phục hiện tượng IDE chưa nhận diện đường dẫn Git mới cài đặt và hiển thị nút "Download Git".
+  2. Khai báo trực tiếp thuộc tính `"git.path": "C:\\Users\\SURFACE\\AppData\\Local\\Programs\\Git\\cmd\\git.exe"` và `"git.enabled": true` vào cả cấu hình Workspace lẫn cấu hình Global User của Antigravity IDE.
+
+- **Nội dung kỹ thuật đã hoàn thành:**
+  - Cập nhật thành công cả 2 tệp `settings.json`.
+  - Giúp IDE nhận diện ngay lập tức Git portable mà không cần tải lại thủ công.
+  - Hướng dẫn người học reload cửa sổ IDE (`Ctrl + Shift + P` -> `Reload Window`) để kích hoạt giao diện Source Control.
+
+---
+
 ## [2026-11-19 07:48] - Liên Kết Thành Công Remote Origin Tới GitHub Repo yourphuonganh/du-an-ban-le-favorita-1
 
 - **Môi trường & Tệp tác động:**
