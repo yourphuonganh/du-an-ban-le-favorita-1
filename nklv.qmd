@@ -32,6 +32,33 @@ Tệp nhật ký ghi nhận tiến trình làm việc, thực nghiệm xây dự
 
 ---
 
+## [2026-11-19 07:48] - Liên Kết Thành Công Remote Origin Tới GitHub Repo yourphuonganh/du-an-ban-le-favorita-1
+
+- **Môi trường & Tệp tác động:**
+  - **Môi trường:** Git 2.56.1, GitHub Remote, Antigravity IDE.
+  - **Tệp tác động:**
+    - [nklv.qmd](file:///c:/Users/SURFACE/Documents/PROJECT7/nklv.qmd)
+    - Cấu hình Git: `.git/config`
+    - Remote URL: `https://github.com/yourphuonganh/du-an-ban-le-favorita-1.git`
+
+- **Mục tiêu phiên làm việc:**
+  1. Nhận liên kết kho lưu trữ GitHub chính thức từ người học (`yourphuonganh/du-an-ban-le-favorita-1`).
+  2. Cấu hình điểm kết nối từ xa (`git remote add origin`).
+  3. Cấu hình cơ chế xác thực Git Credential Manager sẵn sàng cho việc đồng bộ mã nguồn lên đám mây.
+
+- **Nội dung kỹ thuật đã hoàn thành:**
+  - Gắn remote thành công: `origin -> https://github.com/yourphuonganh/du-an-ban-le-favorita-1.git`.
+  - Cấu hình nhánh đẩy mặc định: `main`.
+  - Toàn bộ 13 tệp tài liệu, báo cáo, dashboard và nhật ký đã sẵn sàng trên cây thư mục sạch sẽ (`working tree clean`).
+
+- **Chuỗi Tương tác / Prompt Chiến lược & Quá trình Debug Thực nghiệm (Learning Trace):**
+  - **Prompt của người học:**
+    > *"yourphuonganh/du-an-ban-le-favorita-1"*
+  - **Phân tích nhận thức:** Người học đã nhanh chóng khởi tạo kho lưu trữ trên GitHub và gửi lại đường link để kết nối. Toàn bộ hạ tầng cục bộ đã được thiết lập tự động hoàn chỉnh, chỉ còn bước đẩy (push) qua cơ chế xác thực bảo mật OAuth một chạm của IDE.
+  - **Hành động phản hồi:** Cập nhật cấu hình remote origin, xác nhận trạng thái kho lưu trữ và hướng dẫn người học thao tác bấm nút đồng bộ (Publish/Sync) trực tiếp trong IDE.
+
+---
+
 ## [2026-11-19 07:36] - Tự Động Thiết Lập Môi Trường Git & Khởi Tạo Repository Cục Bộ Chuẩn Hóa Dự Án PRJ-07
 
 - **Môi trường & Tệp tác động:**
