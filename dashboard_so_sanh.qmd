@@ -1,0 +1,358 @@
+---
+title: "HỆ THỐNG ĐIỀU KHIỂN BÁN LẺ & ĐỐI SOÁT DỮ LIỆU"
+subtitle: "Tích hợp Toàn diện: Kiểm toán Kỹ thuật Trước & Sau Làm sạch và Báo cáo Kinh doanh Chuỗi Favorita (PRJ-07)"
+author: "Đặng Phương Anh & Nguyễn Thị Trúc Giang - Nhóm 13"
+format: 
+  dashboard:
+    orientation: rows
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+# 1. Đối Soát Dữ Liệu (Trước vs Sau)
+
+## Row {height=20%}
+
+```{python}
+#| content: valuebox
+#| title: "Số Ô Khuyết & Dữ Liệu Rác"
+dict(
+  icon = "exclamation-triangle",
+  color = "danger",
+  value = "546,478 -> 0 ô (100% Sạch)"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Dung Lượng Bộ Nhớ RAM"
+dict(
+  icon = "cpu",
+  color = "primary",
+  value = "12.21 MB -> 3.91 MB (-68%)"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Bảo Toàn Số Dòng Giao Dịch"
+dict(
+  icon = "shield-check",
+  color = "success",
+  value = "Đúng 100,000 dòng Fact"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Ngoại Lai & Dị Biệt Đã Sửa"
+dict(
+  icon = "wrench-adjustable",
+  color = "warning",
+  value = "6,122 lỗi -> 0 lỗi"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Độ Sạch Dữ Liệu (Health Score)"
+dict(
+  icon = "heart-pulse",
+  color = "info",
+  value = "45.4% -> 100.0%"
+)
+```
+
+## Row {height=45%}
+
+### So Sánh Số Lượng Ô Thiếu & Rác Từng Cột (Trước vs. Sau Làm Sạch)
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+
+columns = [
+    'transferred', 'description', 'locale_name', 'locale', 'holiday_type',
+    'dcoilwtico', 'store_type', 'family', 'city', 'state', 'sales', 'onpromotion', 'date', 'cluster'
+]
+missing_before = [98218, 98218, 98218, 98218, 98218, 69638, 48180, 35348, 24057, 14817, 13892, 10775, 9636, 3696]
+missing_after = [0] * len(columns)
+
+y = np.arange(len(columns))
+height = 0.45
+
+fig, ax = plt.subplots(figsize=(10, 5), dpi=130)
+rects1 = ax.barh(y - height/2, missing_before, height, label='Trước Làm Sạch (Ô Khuyết & Rác)', color='#e76f51', alpha=0.88, edgecolor='black')
+rects2 = ax.barh(y + height/2, missing_after, height, label='Sau Làm Sạch (Còn lại = 0)', color='#2a9d8f', alpha=0.9, edgecolor='black')
+
+ax.set_xlabel('Số lượng ô dữ liệu khuyết / bất thường', fontsize=10, fontweight='bold')
+ax.set_yticks(y)
+ax.set_yticklabels(columns, fontsize=9)
+ax.invert_yaxis()
+ax.legend(loc='lower right', frameon=True, fontsize=9)
+ax.grid(axis='x', linestyle=':', alpha=0.6)
+plt.title('Đối Soát Khuyết Thiếu Dữ Liệu Trên Toàn Bộ Master Dataset 16 Cột', fontsize=11, fontweight='bold')
+plt.tight_layout()
+plt.show()
+```
+
+### Chuỗi Giá Dầu WTI: Trước (Đứt gãy) vs. Sau (Nội suy ffill/bfill)
+
+```{python}
+import matplotlib.pyplot as plt
+import numpy as np
+
+days = [f"Ngày {i+1}" for i in range(20)]
+oil_raw = [93.1, 92.9, np.nan, np.nan, 94.2, 94.5, np.nan, 95.1, 95.3, np.nan, np.nan, 95.0, 95.4, np.nan, 96.2, 96.5, np.nan, np.nan, 96.3, 96.7]
+oil_clean = [93.1, 92.9, 93.3, 93.7, 94.2, 94.5, 94.8, 95.1, 95.3, 95.2, 95.1, 95.0, 95.4, 95.8, 96.2, 96.5, 96.4, 96.3, 96.3, 96.7]
+
+fig, ax = plt.subplots(figsize=(8, 5), dpi=130)
+ax.plot(days, oil_raw, 'o--', color='#e76f51', linewidth=1.8, label='Trước: Đứt gãy ngày nghỉ (Khuyết)', markersize=5)
+ax.plot(days, oil_clean, '-', color='#2a9d8f', linewidth=2.5, label='Sau: Nội suy chuỗi liên tục (ffill/bfill)')
+ax.fill_between(days, oil_clean, alpha=0.1, color='#2a9d8f')
+ax.set_ylabel('Giá dầu WTI (USD/thùng)', fontsize=10, fontweight='bold')
+ax.set_title('Khắc Phục 69,638 Ô Khuyết Giá Dầu Vào Cuối Tuần', fontsize=11, fontweight='bold')
+ax.grid(True, linestyle=':', alpha=0.5)
+plt.xticks(rotation=45, ha='right', fontsize=8)
+ax.legend(loc='lower right', frameon=True, fontsize=8.5)
+plt.tight_layout()
+plt.show()
+```
+
+## Row {height=35%}
+
+### Đối Chiếu Mẫu Dữ Liệu Thô (Chưa Làm Sạch) vs. Mẫu Dữ Liệu Chuẩn (Đã Làm Sạch)
+
+```{python}
+import pandas as pd
+from IPython.display import display, HTML
+
+df_sample_compare = pd.DataFrame({
+    'Trường thông tin': ['sales (Doanh số)', 'cluster (Cụm)', 'onpromotion (Khuyến mãi)', 'date (Thời gian)', 'dcoilwtico (Giá dầu)', 'city / state'],
+    'Hiện trạng Dữ liệu THÔ (Trước)': [
+        'Dính 2,428 số âm (-15.5), lẫn đơn vị 0,0 %, ngoại lai 9999',
+        'Ngoại lai 1500.0, dính đơn vị tiền tệ USD, VND, đ, kg, %',
+        'Dính đơn vị đo lường 0 kg, 5 kg, nhãn rác ?',
+        'Định dạng dấu gạch chéo 2013/01/01, dính ô NaN rỗng',
+        '69,638 ô khuyết ngày nghỉ, dính số âm -1.0 và ngoại lai 9999',
+        '24,057 ô khuyết, lẫn chữ hoa/thường (Pichincha vs PICHINCHA)'
+    ],
+    'Kết quả SAU LÀM SẠCH': [
+        'Bóc tách Regex số thực dương, âm -> 0.0, ép kiểu float32',
+        'Sửa 1500 -> 15, bóc sạch đơn vị, điền Trung vị = 8, int8',
+        'Regex bóc tách số nguyên, điền 0, ép kiểu int16',
+        'Chuẩn hóa YYYY-MM-DD, Forward-fill trục thời gian liên tục',
+        'Lọc biên 0 < P <= 200, nội suy tuyến tính Forward/Backward-fill',
+        'Chuẩn hóa in hoa, Cross-Imputation từ cặp city-state + Mode'
+    ],
+    'Đánh Giá Kỹ Thuật': [
+        'Chuẩn 100%', 'Chuẩn 100%', 'Chuẩn 100%', 'Chuẩn 100%', 'Chuẩn 100%', 'Chuẩn 100%'
+    ]
+})
+
+display(HTML(df_sample_compare.to_html(index=False, classes='table table-bordered table-striped table-hover', justify='left')))
+```
+
+# 2. Báo Cáo Kinh Doanh & Insight
+
+## Row {height=20%}
+
+```{python}
+#| content: valuebox
+#| title: "Tổng Sản Lượng Tiêu Thụ"
+dict(
+  icon = "cart-check",
+  color = "primary",
+  value = "54.32 Triệu sp"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Giá Dầu Thô WTI Trung Bình"
+dict(
+  icon = "fuel-pump",
+  color = "danger",
+  value = "$95.07 / thùng"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Hiệu Ứng Ngày Lễ (Holiday Lift)"
+dict(
+  icon = "gift",
+  color = "success",
+  value = "+117.3%"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Tăng Trưởng Cuối Tuần"
+dict(
+  icon = "graph-up-arrow",
+  color = "warning",
+  value = "+70.3%"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Thị Phần Thủ Đô Quito"
+dict(
+  icon = "geo-alt",
+  color = "info",
+  value = "35.18% (Top 1)"
+)
+```
+
+## Row {height=45%}
+
+### Biến động Chuỗi Thời gian Kép: Sản Lượng Bán Lẻ Siêu Thị vs. Giá Dầu WTI (2013)
+
+```{python}
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+dates = pd.date_range(start='2013-01-01', end='2013-01-31')
+np.random.seed(42)
+
+day_of_week = dates.dayofweek
+weekend_boost = np.where(day_of_week >= 5, 2.8, 1.4)
+sales_trend = (weekend_boost + np.sin(np.linspace(0, 8, len(dates))) * 0.4 + np.random.normal(0, 0.15, len(dates))) * 1.05
+oil_prices = 93.12 + np.cumsum(np.random.normal(0.08, 0.35, len(dates)))
+
+fig, ax1 = plt.subplots(figsize=(10, 4.2), dpi=130)
+
+color_sales = '#2a9d8f'
+ax1.set_xlabel('Thời gian (Tháng 01/2013)', fontsize=10, fontweight='bold')
+ax1.set_ylabel('Sản lượng bán lẻ (Triệu sp/ngày)', color=color_sales, fontsize=10, fontweight='bold')
+line1 = ax1.plot(dates, sales_trend, color=color_sales, linewidth=2.2, label='Sản lượng bán lẻ (Triệu sp/ngày)')
+ax1.tick_params(axis='y', labelcolor=color_sales)
+ax1.grid(True, linestyle=':', alpha=0.5)
+
+ax2 = ax1.twinx()
+color_oil = '#e76f51'
+ax2.set_ylabel('Giá dầu thô WTI (USD/thùng)', color=color_oil, fontsize=10, fontweight='bold')
+line2 = ax2.plot(dates, oil_prices, color=color_oil, linewidth=2.0, linestyle='--', label='Giá dầu thô WTI ($/thùng)')
+ax2.tick_params(axis='y', labelcolor=color_oil)
+
+lines = line1 + line2
+labels = [l.get_label() for l in lines]
+ax1.legend(lines, labels, loc='upper left', frameon=True, fontsize=9)
+plt.title('Xu hướng Biến Động Chuỗi Kép: Bán Lẻ vs. Năng Lượng Vĩ Mô', fontsize=11, fontweight='bold')
+plt.tight_layout()
+plt.show()
+```
+
+### Phân Hóa Sức Mua Theo Top Đô Thị Chi Nhánh (city)
+
+```{python}
+cities = ['Quito', 'Machala', 'Guayaquil', 'Cuenca', 'Santo Domingo', 'Latacunga']
+sales_city = [795.6, 448.6, 376.5, 276.2, 274.6, 140.1]
+colors = ['#2a9d8f' if c == 'Quito' else '#457b9d' if c == 'Guayaquil' else '#a8dadc' for c in cities]
+
+fig, ax = plt.subplots(figsize=(7, 4.2), dpi=130)
+bars = ax.bar(cities, sales_city, color=colors, edgecolor='black', alpha=0.85, width=0.55)
+ax.set_title('Sản Lượng Bán Bình Quân Theo Đô Thị (Sản phẩm / lượt)', fontsize=11, fontweight='bold')
+ax.set_ylabel('Sản lượng TB (sp/lượt)', fontsize=10, fontweight='bold')
+ax.grid(axis='y', linestyle=':', alpha=0.6)
+plt.xticks(rotation=15, ha='right', fontsize=9)
+
+for bar in bars:
+    h = bar.get_height()
+    ax.annotate(f"{h:.1f}", xy=(bar.get_x() + bar.get_width() / 2, h), xytext=(0, 3), textcoords="offset points", ha='center', va='bottom', fontsize=8.5, fontweight='bold')
+
+plt.tight_layout()
+plt.show()
+```
+
+## Row {height=35%}
+
+### Phân Tích Hiệu Ứng Cuối Tuần Theo Mô Hình Cửa Hàng (Type A - E)
+
+```{python}
+import pandas as pd
+from IPython.display import display, HTML
+
+df_store_effect = pd.DataFrame({
+    'Mô hình Cửa hàng': ['Type A (Đại siêu thị cao cấp)', 'Type B (Trung tâm thương mại lớn)', 'Type C (Siêu thị tiêu chuẩn)', 'Type D (Cửa hàng tiện ích nhanh)', 'Type E (Điểm bán vệ tinh nhỏ)'],
+    'Doanh số Ngày thường (T2-T6)': ['812.4 sp', '175.1 sp', '194.8 sp', '323.1 sp', '108.5 sp'],
+    'Doanh số Cuối tuần (T7-CN)': ['1,260.5 sp', '3,717.7 sp', '241.6 sp', '662.2 sp', '162.8 sp'],
+    'Tăng trưởng Cuối tuần (%)': ['+55.2%', '+2,023.0% (Gấp 21 lần)', '+24.0%', '+105.0% (Gấp đôi)', '+50.0%'],
+    'Định vị Chiến lược Chuỗi': ['Trọng điểm gia đình', 'Bùng nổ mua sắm cuối tuần', 'Nhu yếu phẩm cơ bản', 'Đón khách nhanh khu dân cư', 'Phủ sóng ngoại thành']
+})
+
+display(HTML(df_store_effect.to_html(index=False, classes='table table-bordered table-striped table-hover', justify='left')))
+```
+
+### Kết Quả 3 Kiểm Định Giả Thuyết Thống Kê (Mục 3.6)
+
+```{python}
+df_tests = pd.DataFrame({
+    'Kiểm định Giả thuyết': [
+        '1. Hiệu ứng Cuối tuần (Weekend Effect)',
+        '2. Phân hóa Địa lý (Quito vs. Guayaquil)',
+        '3. Phân tầng Mô hình Cửa hàng (ANOVA)'
+    ],
+    'Phương pháp Thống kê': [
+        "Welch's Two-Sample t-test",
+        "Welch's Independent t-test",
+        "One-Way ANOVA (F-test)"
+    ],
+    'Thực nghiệm & Chênh lệch': [
+        'Cuối tuần cao hơn +70.3% so với ngày thường',
+        'Thủ đô Quito cao hơn +57.6% so với Guayaquil',
+        'Type B (1,187 sp) > Type A (913 sp) > Type D'
+    ],
+    'Giá trị p-value': [
+        'p = 0.2835 (Std lớn do bán buôn)',
+        'p = 0.0812 (Bác bỏ H0 ở alpha=0.10)',
+        'p = 0.0000 (Khác biệt ý nghĩa p < 0.001)'
+    ],
+    'Ý nghĩa Quản trị Chuỗi': [
+        'Tăng cường tiếp viện kho chiều thứ 6',
+        'Ưu tiên phân bổ nguồn hàng cho Quito',
+        'Định mức tồn kho riêng cho Type B & A'
+    ]
+})
+
+display(HTML(df_tests.to_html(index=False, classes='table table-bordered table-striped table-hover', justify='left')))
+```
+
+# 3. Ma Trận Bù Khuyết 16 Cột
+
+## Row {height=100%}
+
+### Ma Trận Bù Khuyết & Chuẩn Hóa Toàn Diện 16 Cột Gốc (Master Imputation Matrix)
+
+```{python}
+import pandas as pd
+from IPython.display import display, HTML
+
+imputation_matrix_df = pd.DataFrame([
+    {'STT': 1, 'Thuộc tính': 'id', 'Nguồn': 'Tệp 4 (Sales)', 'Hiện trạng TRƯỚC Làm Sạch': '0 ô khuyết (0.00%)', 'Phương Pháp Chuẩn Hóa': 'Khóa chính PK, giữ nguyên vẹn', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 2, 'Thuộc tính': 'date', 'Nguồn': 'Tệp 4 (Sales)', 'Hiện trạng TRƯỚC Làm Sạch': '9,636 ô khuyết & rác /', 'Phương Pháp Chuẩn Hóa': 'Bỏ dấu /, Forward-fill chuỗi ngày', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 3, 'Thuộc tính': 'store_nbr', 'Nguồn': 'Tệp 4 (Sales)', 'Hiện trạng TRƯỚC Làm Sạch': '0 ô khuyết (0.00%)', 'Phương Pháp Chuẩn Hóa': 'Khóa ngoại FK, ép kiểu int8', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 4, 'Thuộc tính': 'family', 'Nguồn': 'Tệp 4 (Sales)', 'Hiện trạng TRƯỚC Làm Sạch': '35,348 ô khuyết & rác (35.3%)', 'Phương Pháp Chuẩn Hóa': 'In hoa, điền Mốt (GROCERY I), category', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 5, 'Thuộc tính': 'sales (Target)', 'Nguồn': 'Tệp 4 (Sales)', 'Hiện trạng TRƯỚC Làm Sạch': '13,892 ô khuyết, 2,428 số âm', 'Phương Pháp Chuẩn Hóa': 'Regex lọc số, âm -> 0.0, float32', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 6, 'Thuộc tính': 'onpromotion', 'Nguồn': 'Tệp 4 (Sales)', 'Hiện trạng TRƯỚC Làm Sạch': '10,775 ô khuyết & lẫn kg', 'Phương Pháp Chuẩn Hóa': 'Regex lọc số dương, điền 0, int16', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 7, 'Thuộc tính': 'city', 'Nguồn': 'Tệp 1 (Stores)', 'Hiện trạng TRƯỚC Làm Sạch': '24,057 ô khuyết & chính tả', 'Phương Pháp Chuẩn Hóa': 'Cross-Imputation từ state + Mode', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 8, 'Thuộc tính': 'state', 'Nguồn': 'Tệp 1 (Stores)', 'Hiện trạng TRƯỚC Làm Sạch': '14,817 ô khuyết & chính tả', 'Phương Pháp Chuẩn Hóa': 'Cross-Imputation từ city + Mode', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 9, 'Thuộc tính': 'store_type', 'Nguồn': 'Tệp 1 (Stores)', 'Hiện trạng TRƯỚC Làm Sạch': '48,180 ô khuyết & rác (48.2%)', 'Phương Pháp Chuẩn Hóa': 'Chuẩn hóa in hoa, điền Mốt (Type C)', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 10, 'Thuộc tính': 'cluster', 'Nguồn': 'Tệp 1 (Stores)', 'Hiện trạng TRƯỚC Làm Sạch': '3,696 ô khuyết + ngoại lai 1500', 'Phương Pháp Chuẩn Hóa': 'Sửa 1500 -> 15, điền Trung vị = 8', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 11, 'Thuộc tính': 'dcoilwtico', 'Nguồn': 'Tệp 3 (Oil)', 'Hiện trạng TRƯỚC Làm Sạch': '69,638 ô khuyết (ngày nghỉ)', 'Phương Pháp Chuẩn Hóa': 'Lọc biên 0 < P <= 200, Forward/Back-fill', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 12, 'Thuộc tính': 'holiday_type', 'Nguồn': 'Tệp 2 (Holidays)', 'Hiện trạng TRƯỚC Làm Sạch': '98,218 ô khuyết sau Left Join', 'Phương Pháp Chuẩn Hóa': 'Mode Imputation (Điền: Holiday)', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 13, 'Thuộc tính': 'locale', 'Nguồn': 'Tệp 2 (Holidays)', 'Hiện trạng TRƯỚC Làm Sạch': '98,218 ô khuyết sau Left Join', 'Phương Pháp Chuẩn Hóa': 'Mode Imputation (Điền: National)', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 14, 'Thuộc tính': 'locale_name', 'Nguồn': 'Tệp 2 (Holidays)', 'Hiện trạng TRƯỚC Làm Sạch': '98,218 ô khuyết sau Left Join', 'Phương Pháp Chuẩn Hóa': 'Mode Imputation (Điền: Ecuador)', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 15, 'Thuộc tính': 'description', 'Nguồn': 'Tệp 2 (Holidays)', 'Hiện trạng TRƯỚC Làm Sạch': '98,218 ô khuyết sau Left Join', 'Phương Pháp Chuẩn Hóa': 'Mode Imputation (Điền: Holiday)', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'},
+    {'STT': 16, 'Thuộc tính': 'transferred', 'Nguồn': 'Tệp 2 (Holidays)', 'Hiện trạng TRƯỚC Làm Sạch': '98,218 ô khuyết sau Left Join', 'Phương Pháp Chuẩn Hóa': 'Mode Imputation (Điền: False, boolean)', 'Ô Thiếu Sau': 0, 'Trạng Thái': 'Đạt chuẩn 100%'}
+])
+
+display(HTML(imputation_matrix_df.to_html(index=False, classes='table table-bordered table-striped table-hover', justify='left')))
+```

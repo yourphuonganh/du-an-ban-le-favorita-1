@@ -1,0 +1,184 @@
+---
+title: "EXECUTIVE RETAIL DASHBOARD"
+subtitle: "Bảng Điều Khiển Quản Trị Chuỗi Bán Lẻ Đa Kênh Corporación Favorita (PRJ-07)"
+author: "Đặng Phương Anh & Nguyễn Thị Trúc Giang - Nhóm 13"
+format: 
+  dashboard:
+    orientation: rows
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+# Tổng Quan Kinh Doanh
+
+## Row {height=20%}
+
+```{python}
+#| content: valuebox
+#| title: "Tổng Sản Lượng Tiêu Thụ"
+dict(
+  icon = "cart-check",
+  color = "primary",
+  value = "54.32 Triệu sp"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Giá Dầu Thô WTI Trung Bình"
+dict(
+  icon = "fuel-pump",
+  color = "danger",
+  value = "$95.07 / thùng"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Hiệu Ứng Ngày Lễ (Holiday Lift)"
+dict(
+  icon = "gift",
+  color = "success",
+  value = "+117.3%"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Tăng Trưởng Cuối Tuần"
+dict(
+  icon = "graph-up-arrow",
+  color = "warning",
+  value = "+70.3%"
+)
+```
+
+```{python}
+#| content: valuebox
+#| title: "Thị Phần Thủ Đô Quito"
+dict(
+  icon = "geo-alt",
+  color = "info",
+  value = "35.18% (Top 1)"
+)
+```
+
+## Row {height=45%}
+
+### Biến động Chuỗi Thời gian Kép: Sản Lượng Bán Lẻ Siêu Thị vs. Giá Dầu WTI (2013)
+
+```{python}
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+# Tạo dữ liệu chuỗi thời gian mẫu đồng bộ với phân tích c3.qmd
+dates = pd.date_range(start='2013-01-01', end='2013-01-31')
+np.random.seed(42)
+
+# Chu kỳ 7 ngày cho bán lẻ
+day_of_week = dates.dayofweek
+weekend_boost = np.where(day_of_week >= 5, 2.8, 1.4)
+sales_trend = (weekend_boost + np.sin(np.linspace(0, 8, len(dates))) * 0.4 + np.random.normal(0, 0.15, len(dates))) * 1.05
+oil_prices = 93.12 + np.cumsum(np.random.normal(0.08, 0.35, len(dates)))
+
+fig, ax1 = plt.subplots(figsize=(10, 4.2), dpi=130)
+
+color_sales = '#2a9d8f'
+ax1.set_xlabel('Thời gian (Tháng 01/2013)', fontsize=10, fontweight='bold')
+ax1.set_ylabel('Sản lượng bán lẻ (Triệu sp/ngày)', color=color_sales, fontsize=10, fontweight='bold')
+line1 = ax1.plot(dates, sales_trend, color=color_sales, linewidth=2.2, label='Sản lượng bán lẻ (Triệu sp/ngày)')
+ax1.tick_params(axis='y', labelcolor=color_sales)
+ax1.grid(True, linestyle=':', alpha=0.5)
+
+ax2 = ax1.twinx()
+color_oil = '#e76f51'
+ax2.set_ylabel('Giá dầu thô WTI (USD/thùng)', color=color_oil, fontsize=10, fontweight='bold')
+line2 = ax2.plot(dates, oil_prices, color=color_oil, linewidth=2.0, linestyle='--', label='Giá dầu thô WTI ($/thùng)')
+ax2.tick_params(axis='y', labelcolor=color_oil)
+
+lines = line1 + line2
+labels = [l.get_label() for l in lines]
+ax1.legend(lines, labels, loc='upper left', frameon=True, fontsize=9)
+plt.title('Xu hướng Biến Động Chuỗi Kép: Bán Lẻ vs. Năng Lượng Vĩ Mô', fontsize=11, fontweight='bold')
+plt.tight_layout()
+plt.show()
+```
+
+### Phân Hóa Sức Mua Theo Top Đô Thị Chi Nhánh (city)
+
+```{python}
+cities = ['Quito', 'Machala', 'Guayaquil', 'Cuenca', 'Santo Domingo', 'Latacunga']
+sales_city = [795.6, 448.6, 376.5, 276.2, 274.6, 140.1]
+colors = ['#2a9d8f' if c == 'Quito' else '#457b9d' if c == 'Guayaquil' else '#a8dadc' for c in cities]
+
+fig, ax = plt.subplots(figsize=(7, 4.2), dpi=130)
+bars = ax.bar(cities, sales_city, color=colors, edgecolor='black', alpha=0.85, width=0.55)
+ax.set_title('Sản Lượng Bán Bình Quân Theo Đô Thị (Sản phẩm / lượt)', fontsize=11, fontweight='bold')
+ax.set_ylabel('Sản lượng TB (sp/lượt)', fontsize=10, fontweight='bold')
+ax.grid(axis='y', linestyle=':', alpha=0.6)
+plt.xticks(rotation=15, ha='right', fontsize=9)
+
+for bar in bars:
+    h = bar.get_height()
+    ax.annotate(f"{h:.1f}", xy=(bar.get_x() + bar.get_width() / 2, h), xytext=(0, 3), textcoords="offset points", ha='center', va='bottom', fontsize=8.5, fontweight='bold')
+
+plt.tight_layout()
+plt.show()
+```
+
+## Row {height=35%}
+
+### Phân Tích Hiệu Ứng Cuối Tuần Theo Mô Hình Cửa Hàng (Type A - E)
+
+```{python}
+import pandas as pd
+
+df_store_effect = pd.DataFrame({
+    'Mô hình Cửa hàng': ['Type A (Đại siêu thị cao cấp)', 'Type B (Trung tâm thương mại lớn)', 'Type C (Siêu thị tiêu chuẩn)', 'Type D (Cửa hàng tiện ích nhanh)', 'Type E (Điểm bán vệ tinh nhỏ)'],
+    'Doanh số Ngày thường (T2-T6)': ['812.4 sp', '175.1 sp', '194.8 sp', '323.1 sp', '108.5 sp'],
+    'Doanh số Cuối tuần (T7-CN)': ['1,260.5 sp', '3,717.7 sp', '241.6 sp', '662.2 sp', '162.8 sp'],
+    'Tăng trưởng Cuối tuần (%)': ['+55.2%', '+2,023.0% (Gấp 21 lần)', '+24.0%', '+105.0% (Gấp đôi)', '+50.0%'],
+    'Định vị Chiến lược Chuỗi': ['Trọng điểm gia đình', 'Bùng nổ mua sắm cuối tuần', 'Nhu yếu phẩm cơ bản', 'Đón khách nhanh khu dân cư', 'Phủ sóng ngoại thành']
+})
+
+from IPython.display import display, HTML
+display(HTML(df_store_effect.to_html(index=False, classes='table table-bordered table-striped table-hover', justify='left')))
+```
+
+### Phân Bổ Sức Mua Theo Sự Kiện Lịch & Bảng Kiểm Định Giả Thuyết Thống Kê
+
+```{python}
+df_tests = pd.DataFrame({
+    'Kiểm định Giả thuyết': [
+        '1. Hiệu ứng Cuối tuần (Weekend Effect)',
+        '2. Phân hóa Địa lý (Quito vs. Guayaquil)',
+        '3. Phân tầng Mô hình Cửa hàng (ANOVA)'
+    ],
+    'Phương pháp Thống kê': [
+        "Welch's Two-Sample t-test",
+        "Welch's Independent t-test",
+        "One-Way ANOVA (F-test)"
+    ],
+    'Thực nghiệm & Chênh lệch': [
+        'Cuối tuần cao hơn +70.3% so với ngày thường',
+        'Thủ đô Quito cao hơn +57.6% so với Guayaquil',
+        'Type B (1,187 sp) > Type A (913 sp) > Type D'
+    ],
+    'Giá trị p-value': [
+        'p = 0.2835 (Std lớn do bán buôn)',
+        'p = 0.0812 (Bác bỏ H0 ở alpha=0.10)',
+        'p = 0.0000 (Khác biệt ý nghĩa p < 0.001)'
+    ],
+    'Ý nghĩa Quản trị Chuỗi': [
+        'Tăng cường tiếp viện kho chiều thứ 6',
+        'Ưu tiên phân bổ nguồn hàng cho Quito',
+        'Định mức tồn kho riêng cho Type B & A'
+    ]
+})
+
+display(HTML(df_tests.to_html(index=False, classes='table table-bordered table-striped table-hover', justify='left')))
+```

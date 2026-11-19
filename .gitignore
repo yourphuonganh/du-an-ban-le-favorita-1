@@ -1,0 +1,21 @@
+# Python & Environment
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE & Editor Settings
+.vscode/
+.quarto/
+.idea/
+
+# Large Raw Data Files (> 100MB violates GitHub hard limit)
+*.csv
+
+# Temporary Scratch Files & OS files
+scratch/
+*.log
+Thumbs.db
+Desktop.ini
+.DS_Store

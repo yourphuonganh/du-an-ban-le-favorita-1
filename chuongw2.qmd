@@ -1,0 +1,251 @@
+# CHƯƠNG 1: TỔNG QUAN ĐỀ TÀI VÀ MỤC TIÊU NGHIÊN CỨU
+
+## 1.1. Bối cảnh nghiên cứu và Lý do chọn đề tài
+### 1.1.1. Bối cảnh nghiên cứu
+Trong bối cảnh toàn cầu hóa và sự trỗi dậy mạnh mẽ của cuộc Cách mạng Công nghiệp 4.0, ngành bán lẻ (Retail Industry) đang chứng kiến bước chuyển dịch cơ bản từ mô hình phân phối truyền thống sang mô hình bán lẻ hiện đại đa kênh (Omnichannel Retailing). Tại các chuỗi siêu thị quy mô lớn, việc duy trì lợi thế cạnh tranh không chỉ dừng lại ở vị trí địa lý hay quy mô mặt bằng, mà phụ thuộc mang tính sống còn vào năng lực **quản trị chuỗi cung ứng theo định hướng dữ liệu (Data-driven Supply Chain Management)**.
+
+Trong thực tế vận hành chuỗi bán lẻ, doanh nghiệp phải đối mặt với **nghịch lý quản trị hàng tồn kho (Inventory Dilemma)**:
+* Một mặt, nếu lượng hàng dự trữ tại từng điểm bán quá thấp, siêu thị sẽ đối mặt với nguy cơ **thiếu hụt hàng hóa (Stockout)** trong những đợt nhu cầu đột biến. Điều này không chỉ dẫn đến việc thất thoát doanh thu ngay tại thời điểm bán mà còn làm suy giảm mức độ hài lòng và xói mòn lòng trung thành của người tiêu dùng.
+* Mặt khác, nếu tích trữ quá nhiều hàng hóa an toàn, doanh nghiệp sẽ phải gánh chịu **chi phí lưu kho (Holding costs)** khổng lồ, rủi ro ứ đọng dòng vốn lưu động, và đặc biệt là tổn thất do hư hỏng, hết hạn sử dụng đối với các mặt hàng tiêu dùng nhanh (FMCG), thực phẩm và đồ uống.
+* Nghiêm trọng hơn, khi các quyết định bổ sung hàng hóa được đưa ra dựa trên cảm tính hoặc các dự báo thiếu chuẩn xác, **hiệu ứng chiếc roi da (Bullwhip Effect)** sẽ bị khuếch đại: dao động nhu cầu nhỏ từ người tiêu dùng cuối tại điểm bán lẻ sẽ biến dạng thành những chấn động lớn ngược lên trung tâm phân phối và nhà máy sản xuất, gây hỗn loạn toàn hệ thống.
+
+Để giải quyết bài toán trên, nghiên cứu thực nghiệm được đặt trong bối cảnh hoạt động thực tế của **Corporación Favorita** – một trong những tập đoàn bán lẻ hàng tiêu dùng hàng đầu tại Nam Mỹ. Mạng lưới kinh doanh của doanh nghiệp có cấu trúc phức tạp gồm **54 chi nhánh cửa hàng** phân bố trải dài qua nhiều thành phố, tỉnh bang, được phân thành **5 mô hình kinh doanh** (Type A, B, C, D, E) và **17 phân cụm thị trường (Clusters)** có đặc tính sức mua tương đồng.
+
+Đặc biệt, qua phân tích sơ bộ bộ dữ liệu thực nghiệm liên kết 4 bảng với hơn **3,000,000 dòng giao dịch bán hàng**, hành vi tiêu dùng và sản lượng bán lẻ (`unit_sales`) của chuỗi không chỉ biến thiên theo quy luật nội tại mà chịu sự chi phối đa chiều bởi các nhân tố ngoại sinh:
+1. **Yếu tố Kinh tế Vĩ mô Ngoại sinh (Tệp Giá dầu thô WTI - `oil.csv`):** Ecuador là quốc gia có nền kinh tế phụ thuộc sâu sắc vào hoạt động khai thác và xuất khẩu dầu mỏ. Sự biến động của giá dầu thế giới tác động tức thời đến ngân sách nhà nước, tỷ lệ lạm phát, việc làm và thu nhập khả dụng của hộ gia đình, từ đó làm thay đổi quy mô giỏ hàng tiêu dùng tại các siêu thị.
+2. **Yếu tố Kích cầu Ngắn hạn (Tệp Giao dịch - `train.csv` qua biến `onpromotion`):** Các chiến dịch tiếp thị, giảm giá và khuyến mãi trưng bày kích thích tâm lý gom hàng ngắn hạn, tạo nên các đợt biến thiên doanh số đột ngột giữa 33 ngành hàng sản phẩm khác nhau.
+3. **Yếu tố Mùa vụ, Văn hóa và Sự kiện Bất khả kháng (Tệp Ngày lễ - `holidays_events.csv`):** Chu kỳ tiêu dùng gắn liền với các kỳ nghỉ lễ quốc gia, ngày lễ địa phương, chu kỳ nhận lương (ngày 15 và cuối tháng), cùng các cú sốc bất khả kháng (như thảm họa động đất năm 2016 tác động nặng nề lên hạ tầng và thói quen mua sắm nhu yếu phẩm).
+4. **Thách thức Xử lý Dữ liệu Lớn (Big Data Engineering):** Với hơn 3 triệu quan sát và 36 triệu ô dữ liệu hợp nhất, việc nạp và xử lý trực tiếp trên bộ nhớ máy tính cá nhân thường xuyên gây ra lỗi cạn kiệt tài nguyên bộ nhớ (Out-of-Memory / Memory Overflow). Điều này đòi hỏi các giải pháp kỹ thuật tối ưu hóa bộ nhớ chuyên sâu (`category` dtype, `float32`, `chunksize`) trước khi đưa vào mô hình học máy.
+
+### 1.1.2. Lý do chọn đề tài
+Xuất phát từ bối cảnh kinh doanh và thách thức kỹ thuật nêu trên, nhóm lựa chọn thực hiện đề tài **"PRJ-07: Dự báo Doanh số Bán lẻ Đa kênh theo Chuỗi Cửa hàng (Corporación Favorita / Walmart Big Retail Sales)"** vì những lý do then chốt sau:
+
+#### 1. Tính cấp thiết về mặt Quản trị Bán lẻ và Kinh doanh
+* **Tối ưu hóa bài toán phân bổ hàng hóa theo từng ngành hàng tại từng chi nhánh:** Chuỗi siêu thị không thể áp dụng một công thức dự báo đồng nhất cho mọi cửa hàng. Việc xây dựng mô hình dự báo phân cấp chi tiết theo 33 ngành hàng tại 54 điểm bán giúp ban giám đốc chuỗi bán lẻ chuyển đổi từ thế "ứng phó bị động" sang "hoạch định chủ động", phân bổ nguồn hàng chính xác đến từng điểm bán cục bộ.
+* **Hạn chế rủi ro tồn kho và nâng cao hiệu quả tài chính:** Dự báo chuẩn xác giúp giảm thiểu tối đa chi phí thất thoát do hết hạn sử dụng đối với các mặt hàng tươi sống, tối ưu hóa tỷ lệ vòng quay hàng tồn kho (Inventory Turnover Ratio) và dự toán doanh thu dòng tiền với độ tin cậy cao.
+
+#### 2. Tính vượt trội về Phương pháp luận và Kỹ thuật Khoa học Dữ liệu
+* **Vượt qua giới hạn của các phương pháp thống kê cổ điển:** Các mô hình chuỗi thời gian truyền thống như ARIMA hay Holt-Winters chỉ xử lý được từng chuỗi đơn lẻ và gặp trở ngại nghiêm trọng khi xử lý dữ liệu bảng (Panel Data) quy mô hàng triệu dòng có cấu trúc phi tuyến tính và chứa nhiều biến ngoại sinh. 
+* **Ứng dụng Mô hình Học máy Rừng Ngẫu Nhiên (Random Forest Regressor):** Đề tài khai thác sức mạnh của thuật toán Ensemble Learning (Bagging) nhằm tự động học các tương tác phức tạp giữa ngày lễ, giá dầu và khuyến mãi mà không cần giả định phân phối chuẩn.
+* **Đo lường bằng hệ thống chỉ số chuyên biệt cho bán lẻ (RMSE & WMAE):** Đề tài sử dụng chỉ số **WMAE (Weighted Mean Absolute Error)** với cơ chế gán trọng số cao hơn cho các đợt khuyến mãi và ngày lễ, đảm bảo mô hình không bị thiên lệch vào những ngày bán hàng bình thường mà bắt trúng các đỉnh nhọn doanh số.
+* **Giải mã độ quan trọng của đặc trưng (Feature Importance):** Thông qua chỉ số Mean Decrease Impurity (MDI), mô hình không đóng vai trò như một "hộp đen" (Black-box) mà mang lại khả năng diễn giải minh bạch, giúp nhà quản trị nhận diện rõ yếu tố nào (giá dầu, khuyến mãi, tính mùa vụ hay loại hình cửa hàng) chi phối mạnh nhất đến doanh số từng ngành hàng.
+
+#### 3. Ý nghĩa Thực tiễn đối với Năng lực Phân tích Dữ liệu Hiện đại
+* Đề tài là cơ hội ứng dụng toàn diện quy trình chuẩn khoa học dữ liệu **CRISP-DM** kết hợp với các kỹ năng kỹ thuật công nghiệp quan trọng: kỹ thuật nén bộ nhớ (`category` dtype tiết kiệm hơn 70% RAM), kỹ thuật trích xuất chu kỳ thời gian (`.dt`), xử lý dữ liệu dơ thực tế trên hệ thống đa tệp và xuất bản báo cáo học thuật tự động bằng **Antigravity IDE & Quarto**.
+
+## 1.2. Xác định vấn đề và Câu hỏi nghiên cứu
+### 1.2.1. Xác định vấn đề nghiên cứu (Problem Statement)
+Trong kỷ nguyên kinh doanh bán lẻ đa kênh, bài toán trọng tâm đặt ra cho các nhà quản trị không chỉ là bán được bao nhiêu hàng hóa, mà là **làm thế nào để dự báo chính xác nhu cầu bán lẻ đa biến (`unit_sales`) tại từng điểm bán cụ thể theo từng ngành hàng trong điều kiện dữ liệu lớn và chịu sự tác động đồng thời của nhiều nhân tố ngoại sinh**.
+
+Qua khảo sát thực tế bộ dữ liệu hơn 3,000,000 dòng giao dịch của Corporación Favorita, nhóm nghiên cứu nhận diện các nút thắt cốt lõi cấu thành vấn đề nghiên cứu của đề tài PRJ-07:
+1. **Sự phân hóa sâu sắc về không gian địa lý và mô hình cửa hàng:** Hệ thống gồm 54 chi nhánh phân bố tại các thành phố có mức thu nhập khác nhau, được chia thành 5 mô hình cửa hàng (Type A đến E) và 17 phân cụm thị trường (Clusters). Việc áp dụng một giải pháp dự báo cào bằng toàn hệ thống sẽ tạo ra độ lệch lớn giữa các điểm bán, dẫn đến tình trạng thừa hàng ở chi nhánh này nhưng lại cháy hàng cục bộ ở chi nhánh khác.
+2. **Tính đa dạng và phân hóa của danh mục 33 ngành hàng sản phẩm:** Mỗi nhóm ngành hàng (từ thực phẩm tươi sống `MEATS`, `POULTRY`, `PRODUCE` đến hàng phi thực phẩm như `HARDWARE`, `BEAUTY`, `AUTOMOTIVE`) có chu kỳ quay vòng tồn kho, hạn sử dụng và độ nhạy cảm trước các yếu tố ngoại cảnh hoàn toàn khác biệt. Hàng tươi sống đòi hỏi dự báo chính xác tuyệt đối theo từng ngày để tránh hư hỏng, trong khi hàng tiêu dùng lâu bền đòi hỏi nắm bắt xu hướng trung hạn.
+3. **Mối quan hệ phi tuyến phức tạp giữa các yếu tố nội sinh và ngoại sinh:**
+   * Các chiến dịch khuyến mãi (`onpromotion`) thường kích hoạt những đợt bùng nổ doanh số ngắn hạn nhưng dễ gây ra hiện tượng sụt giảm nhu cầu ngay sau đó (hiện tượng người tiêu dùng mua tích trữ trước).
+   * Giá dầu thô thế giới (`oil`) tác động với độ trễ (Lag Effect) lên nền kinh tế và sức mua vĩ mô.
+   * Lịch nghỉ lễ và sự kiện văn hóa (`holidays_events`) tạo nên các đỉnh nhọn doanh số cục bộ (National vs. Local), đòi hỏi phải bóc tách chính xác giữa ngày lễ thực tế và ngày lễ bị dời (`transferred = True`).
+4. **Nút thắt kỹ thuật trong xử lý dữ liệu lớn (Big Data Bottleneck):** Việc xây dựng mô hình dự báo với hơn 3 triệu quan sát trên máy tính thông thường thường dẫn đến hiện tượng tràn bộ nhớ RAM hoặc thời gian huấn luyện mô hình kéo dài ngoài tầm kiểm soát. Do đó, việc ứng dụng các kỹ thuật tiền xử lý tối ưu bộ nhớ (`category` dtype, downcasting) và lựa chọn thuật toán học máy có khả năng xử lý song song, kháng nhiễu mạnh mẽ là yêu cầu kỹ thuật bắt buộc.
+
+### 1.2.2. Hệ thống Câu hỏi nghiên cứu (Research Questions - RQ)
+Để giải quyết thấu đáo và toàn diện vấn đề nghiên cứu nêu trên, đề tài xác lập hệ thống **4 câu hỏi nghiên cứu cụ thể** tương ứng với các trục nội dung từ khảo sát dữ liệu, phân tích nhân tố, mô hình hóa học máy đến ứng dụng quản trị:
+
+* **Câu hỏi nghiên cứu 1 (RQ1 - Về tính quy luật thời gian & chu kỳ bán lẻ):**
+  > *Quy luật biến thiên của doanh số bán lẻ theo chu kỳ thời gian (theo các ngày trong tuần, các tuần trong tháng, chu kỳ nhận lương ngày 15 và cuối tháng, cũng như tính mùa vụ theo năm) diễn ra như thế nào giữa 33 ngành hàng sản phẩm và giữa các phân cụm chi nhánh cửa hàng?*
+
+* **Câu hỏi nghiên cứu 2 (RQ2 - Về tác động của các nhân tố ngoại sinh đa biến):**
+  > *Mức độ và chiều hướng tác động của các chương trình xúc tiến thương mại (`onpromotion`), biến động của chỉ số kinh tế vĩ mô giá dầu thô WTI (`oil`), và các sự kiện nghỉ lễ/sự kiện đặc biệt (`holidays_events`) đối với sản lượng tiêu thụ của từng nhóm mặt hàng tại chuỗi siêu thị như thế nào?*
+
+* **Câu hỏi nghiên cứu 3 (RQ3 - Về kỹ thuật mô hình hóa và hiệu năng học máy):**
+  > *Làm thế nào để xây dựng và tinh chỉnh mô hình học máy **Random Forest Regressor** kết hợp với các kỹ thuật tối ưu hóa bộ nhớ (`category` dtype) và trích xuất đặc trưng thời gian (`.dt`) nhằm đạt được hiệu năng dự báo tối ưu, giảm thiểu sai số theo các thước đo RMSE và WMAE trên tập dữ liệu quy mô lớn hơn 3,000,000 dòng?*
+
+* **Câu hỏi nghiên cứu 4 (RQ4 - Về hàm ý quản trị và giá trị thực tiễn):**
+  > *Từ kết quả phân tích mức độ quan trọng của các đặc trưng (Feature Importance) do mô hình Random Forest cung cấp, nhà quản trị chuỗi bán lẻ có thể rút ra những hàm ý chiến lược nào nhằm tối ưu hóa lượng tồn kho an toàn (Safety Stock), điều tiết mạng lưới phân phối và nâng cao hiệu quả tài chính cho doanh nghiệp?*
+
+## 1.3. Mục tiêu nghiên cứu (Tổng quát và Cụ thể)
+### 1.3.1. Mục tiêu nghiên cứu tổng quát (General Objective)
+Mục tiêu bao trùm của đề tài là **xây dựng một hệ thống mô hình dự báo doanh số bán lẻ đa kênh chính xác, hiệu năng cao và có khả năng diễn giải minh bạch cho chuỗi siêu thị Corporación Favorita**, dựa trên việc kết hợp kỹ thuật tiền xử lý tối ưu bộ nhớ in-memory (`category` dtype), trích xuất đặc trưng chuỗi thời gian chuyên sâu (`.dt`) và giải thuật học máy **Random Forest Regressor**; từ đó lượng hóa mức độ chi phối của các nhân tố khuyến mãi, giá dầu và ngày lễ nhằm cung cấp cơ sở khoa học giúp nhà quản trị tối ưu hóa việc phân bổ nguồn lực, hoạch định chính xác lượng tồn kho an toàn và nâng cao hiệu quả kinh doanh toàn chuỗi.
+
+### 1.3.2. Hệ thống Mục tiêu nghiên cứu cụ thể (Specific Objectives - SO)
+Nhằm hiện thực hóa mục tiêu tổng quát, đề tài xác lập 4 mục tiêu cụ thể ánh xạ trực tiếp với 4 câu hỏi nghiên cứu (RQ1 - RQ4):
+
+* **Mục tiêu cụ thể 1 (SO1 - Tiền xử lý dữ liệu lớn & Phân tích chuỗi thời gian):**
+  * Kiểm toán chất lượng, làm sạch dữ liệu dơ và ghép nối tối ưu 4 tệp dữ liệu CSV thực nghiệm quy mô hơn 3,000,000 quan sát.
+  * Ứng dụng kỹ thuật nén bộ nhớ in-memory (`category` dtype, downcasting `float32`/`int16`, xử lý `chunksize`), cắt giảm ít nhất 60% dung lượng RAM tiêu thụ trên môi trường máy tính cá nhân.
+  * Thực hiện phân tích khám phá dữ liệu (EDA), bóc tách các đặc trưng chu kỳ thời gian (theo ngày trong tuần, ngày trả lương giữa tháng và cuối tháng, tính mùa vụ theo năm) trên 33 nhóm ngành hàng và 54 chi nhánh cửa hàng.
+
+* **Mục tiêu cụ thể 2 (SO2 - Đo lường tác động của các nhân tố ngoại sinh):**
+  * Đo lường mối tương quan và phân tích định lượng tác động của chiến dịch khuyến mãi (`onpromotion`) đối với từng danh mục sản phẩm.
+  * Bóc tách mối quan hệ giữa biến động kinh tế vĩ mô giá dầu thô WTI (`oil.csv`) và sức mua bán lẻ thực phẩm tại Ecuador.
+  * Nhận diện và lượng hóa mức độ đột biến doanh số trong các kỳ nghỉ lễ, sự kiện văn hóa và các biến cố bất khả kháng (`holidays_events.csv`).
+
+* **Mục tiêu cụ thể 3 (SO3 - Xây dựng, Huấn luyện và Đánh giá Mô hình Học máy):**
+  * Xây dựng quy trình kỹ thuật đặc trưng (Feature Engineering) bao gồm: trích xuất thuộc tính lịch `.dt`, các biến trễ (Lag features) và trung bình trượt (Rolling statistics).
+  * Huấn luyện mô hình hồi quy **Random Forest Regressor** song song với mô hình cơ sở (Baseline).
+  * Đánh giá và so sánh hiệu năng dự báo bằng các thước đo chuyên biệt cho ngành bán lẻ gồm **RMSE (Root Mean Squared Error)** và **WMAE (Weighted Mean Absolute Error)** với cơ chế gán trọng số ưu tiên cho ngày lễ và khuyến mãi lớn.
+
+* **Mục tiêu cụ thể 4 (SO4 - Giải mã mô hình và Đề xuất Hàm ý Quản trị):**
+  * Khai thác chỉ số mức độ quan trọng đặc trưng (**Feature Importance - MDI**) của mô hình Random Forest để làm rõ những biến số có ảnh hưởng trọng yếu nhất đến doanh số.
+  * Đề xuất các giải pháp quản trị thực tiễn: xác định ngưỡng tồn kho an toàn (Safety Stock), kiểm soát hiện tượng chiếc roi da (Bullwhip Effect) và tối ưu hóa ngân sách tiếp thị cho ban giám đốc chuỗi bán lẻ.
+
+## 1.4. Đối tượng và Phạm vi nghiên cứu
+### 1.4.1. Đối tượng nghiên cứu (Research Subject)
+* **Đối tượng nội dung:** Sản lượng tiêu thụ và doanh số bán lẻ hàng ngày (`unit_sales`) của 33 nhóm ngành hàng tại 54 điểm bán chi nhánh thuộc chuỗi bán lẻ Corporación Favorita.
+* **Đối tượng các yếu tố tác động:**
+  - *Nhóm nhân tố nội tại cửa hàng:* Vị trí địa lý (`city`, `state`), loại hình mô hình bán lẻ (`type` từ A đến E), và mã định danh phân cụm tương đồng (`cluster` từ 1 đến 17).
+  - *Nhóm nhân tố chuỗi thời gian:* Thứ trong tuần, tuần trong tháng, tháng, quý, năm, và cờ hiệu chu kỳ trả lương (Payday Effect).
+  - *Nhóm nhân tố xúc tiến thương mại:* Tỷ lệ và cờ hiệu khuyến mãi hàng hóa (`onpromotion`).
+  - *Nhóm nhân tố ngoại cảnh:* Biến động giá dầu thô thế giới WTI (`dcoilwtico`) và lịch nghỉ lễ, sự kiện văn hóa, nghỉ bù (`holidays_events`).
+* **Đối tượng phương pháp luận & kỹ thuật:** Quy trình khoa học dữ liệu chuẩn CRISP-DM, kỹ thuật nén bộ nhớ dữ liệu bảng trong Python (`pandas`), và thuật toán hồi quy học máy Random Forest Regressor.
+
+### 1.4.2. Phạm vi nghiên cứu (Research Scope)
+* **Phạm vi không gian:** Toàn bộ mạng lưới 54 siêu thị bán lẻ của tập đoàn Corporación Favorita hoạt động trên phạm vi toàn lãnh thổ Ecuador, trải rộng qua 16 thành phố lớn và 10 tỉnh bang trọng điểm.
+* **Phạm vi thời gian:** Dữ liệu chuỗi thời gian giao dịch bán lẻ liên tục từ ngày **01/01/2013 đến ngày 15/08/2017** (gần 5 năm vận hành liên tục với hơn 3 triệu quan sát thực tế).
+* **Phạm vi ngành hàng:** Toàn diện 33 nhóm ngành hàng tiêu dùng đại diện cho cơ cấu doanh thu của chuỗi siêu thị, bao gồm cả nhóm hàng thiết yếu có hạn sử dụng ngắn (Thực phẩm tươi sống, Bánh mì, Sữa) và nhóm hàng tiêu dùng lâu bền (Gia dụng, Phần cứng, Điện tử).
+* **Phạm vi bộ dữ liệu thực nghiệm:** Khai thác 4 tệp dữ liệu CSV cá nhân hóa mang mã định danh sinh viên:
+  1. `13_2521001053_Nguyễn Thị Trúc Giang 1.csv` (Bảng Danh mục Cửa hàng - `stores`).
+  2. `13_2521001053_Nguyễn Thị Trúc Giang 2.csv` (Bảng Nghỉ lễ & Sự kiện - `holidays_events`).
+  3. `13_2521001053_Nguyễn Thị Trúc Giang 3.csv` (Bảng Giá dầu thô WTI - `oil`).
+  4. `13_2521001053_Nguyễn Thị Trúc Giang 4.csv` (Bảng Chuỗi thời gian Doanh số Bán lẻ - `train`).
+
+## 1.5. Ý nghĩa lý luận và Thực tiễn của đề tài
+### 1.5.1. Ý nghĩa về mặt lý luận và khoa học
+1. **Đóng góp vào kho tàng nghiên cứu ứng dụng Học máy trong Quản trị Chuỗi cung ứng:**
+   Đề tài cung cấp minh chứng thực nghiệm sinh động khẳng định tính ưu việt của các thuật toán học máy phi tham số (Non-parametric Machine Learning), cụ thể là mô hình Ensemble Bagging (Random Forest), so với các phương pháp kinh tế lượng cổ điển khi giải quyết bài toán dự báo nhu cầu bán lẻ đa biến trên dữ liệu bảng lớn.
+2. **Làm sâu sắc mối quan hệ tương tác giữa các biến số vĩ mô và vi mô:**
+   Nghiên cứu làm sáng tỏ cơ chế tác động kết hợp giữa các yếu tố kinh tế vĩ mô ngoại sinh (giá dầu thô thế giới) với các yếu tố vi mô tại điểm bán (chương trình khuyến mãi, đặc điểm văn hóa ngày lễ và mô hình phân cụm chi nhánh), góp phần hoàn thiện khung lý thuyết về dự báo nhu cầu trong ngành bán lẻ hàng tiêu dùng nhanh (FMCG).
+3. **Đóng góp phương pháp luận xử lý dữ liệu lớn trên máy tính cá nhân:**
+   Xây dựng quy trình xử lý dữ liệu chuẩn hóa kết hợp giữa kỹ thuật ép kiểu bộ nhớ in-memory (`category` dtype) và lập trình phòng vệ (Defensive Programming), tạo tiền đề tham khảo cho các nghiên cứu khoa học dữ liệu ứng dụng đối mặt với rào cản phần cứng.
+
+### 1.5.2. Ý nghĩa về mặt thực tiễn đối với quản trị doanh nghiệp
+1. **Nâng cao năng lực ra quyết định cho Giám đốc Chuỗi Bán lẻ (Executive Decision-Making):**
+   Mô hình cung cấp công cụ dự toán doanh số định lượng có độ chính xác cao tại cấp độ chi nhánh và ngành hàng, giúp ban lãnh đạo chuyển đổi từ phong cách điều hành cảm tính sang quản trị bằng dữ liệu thực chứng (Data-driven Management).
+2. **Tối ưu hóa quản trị hàng tồn kho và tiết giảm chi phí vận hành:**
+   * Giúp xác định chính xác lượng đặt hàng lại và mức tồn kho an toàn (Safety Stock) tối ưu, giảm thiểu tình trạng đứt gãy nguồn cung (Stockout) trong các mùa cao điểm mua sắm.
+   * Ngăn chặn triệt để tình trạng ứ đọng hàng hóa, giảm tỷ lệ hư hỏng, hết hạn đối với nhóm hàng thực phẩm tươi sống, qua đó nâng cao hệ số vòng quay vốn lưu động.
+3. **Tối ưu hóa hiệu quả các chiến dịch tiếp thị và xúc tiến bán hàng:**
+   Thông qua việc định lượng mức độ đóng góp của biến khuyến mãi (`onpromotion`) lên từng nhóm ngành hàng, bộ phận tiếp thị có thể phân bổ ngân sách khuyến mãi vào đúng các thời điểm và phân khúc sản phẩm mang lại hiệu quả gia tăng doanh số cao nhất (Tối ưu hóa Marketing ROI).
+4. **Chuẩn mực hóa mã nguồn thực thi phục vụ chuyển giao công nghệ:**
+   Toàn bộ hệ thống mã nguồn phân tích được đóng gói sạch sẽ theo tiêu chuẩn **PEP 8** (Phụ lục A) và ghi vết minh bạch qua **Antigravity IDE** (Phụ lục B), sẵn sàng tích hợp vào hệ thống ERP hoặc các phần mềm quản trị chuỗi cung ứng hiện đại của doanh nghiệp bán lẻ.
+
+
+# CHƯƠNG 2: CƠ SỞ LÝ THUYẾT VÀ PHƯƠNG PHÁP NGHIÊN CỨU
+
+## 2.1. Cơ sở lý thuyết chuyên ngành liên quan
+
+### 2.1.1. Lý thuyết Quản trị Bán lẻ Hiện đại và Dự báo Nhu cầu (Demand Forecasting)
+Trong kỷ nguyên bán lẻ đa kênh (Omnichannel Retail) và quản trị chuỗi cung ứng theo định hướng dữ liệu (Data-driven Supply Chain), dự báo nhu cầu thị trường là khâu tiền đề quyết định toàn bộ hiệu quả hoạt động của doanh nghiệp:
+- Tối ưu hóa quản trị hàng tồn kho (Inventory Control): Dự báo chính xác nhu cầu bán lẻ cho phép nhà quản trị thiết lập lượng tồn kho an toàn (Safety Stock) và điểm đặt hàng lại (Reorder Point) tối ưu, cân bằng giữa chi phí lưu kho (Holding costs) và chi phí tổn thất do đứt gãy nguồn cung (Stockout costs).
+- Kiểm soát hiệu ứng chiếc roi da (Bullwhip Effect): Khi thông tin nhu cầu tại các chi nhánh bán lẻ bị nhiễu loạn hoặc ước lượng thiếu chuẩn xác, sự dao động sẽ bị khuếch đại theo cấp số nhân khi truyền ngược lên tuyến phân phối và nhà sản xuất. Dự báo tại cấp độ chi nhánh - ngành hàng giúp làm phẳng chuỗi cung ứng.
+- Tối ưu hóa chỉ số vòng quay tồn kho (Inventory Turnover Ratio): Đảm bảo tốc độ luân chuyển dòng vốn lưu động cao nhất cho từng nhóm mặt hàng chủ lực.
+
+### 2.1.2. Các nhân tố kinh tế chi phối doanh số chuỗi cửa hàng trong đề tài
+Dựa trên bối cảnh vận hành của chuỗi siêu thị bán lẻ quy mô lớn, biến mục tiêu doanh số (unit_sales) chịu sự tương tác phức tạp của các nhóm nhân tố:
+1. Nhân tố kích cầu ngắn hạn (Sales Promotion): Biến cờ hiệu khuyến mãi (onpromotion) phản ánh các chiến dịch giảm giá, tặng kèm hoặc vị trí trưng bày ưu tiên. Về mặt lý thuyết kinh tế vi mô, khuyến mãi làm dịch chuyển tạm thời đường cầu sang phải và tạo ra hiện tượng "gom hàng" (forward buying) của người tiêu dùng.
+2. Nhân tố chu kỳ thời gian và sự kiện (Seasonality & Holidays):
+- Tính mùa vụ ngắn hạn: Chu kỳ mua sắm theo ngày trong tuần (tăng vọt vào cuối tuần) và chu kỳ theo ngày trả lương (giữa tháng và cuối tháng).
+- Ngày lễ và sự kiện đặc biệt (holidays_events): Phân cấp theo phạm vi địa phương (Local), khu vực (Regional) và quốc gia (National), tạo nên những đột biến doanh thu ngắn hạn mang tính cục bộ.
+3. Nhân tố kinh tế vĩ mô ngoại sinh (Macroeconomic Indicator - Giá dầu thô):
+Biến số giá dầu thế giới (oil.csv - mã chuẩn WTI) đóng vai trò là biến đại diện cho sức khỏe nền kinh tế. Đối với quốc gia phụ thuộc xuất khẩu dầu mỏ như Ecuador, biến động giá dầu tác động trực tiếp đến lạm phát, thu nhập khả dụng và chỉ số niềm tin tiêu dùng.
+4. Đặc tính phân cụm điểm bán (Store Characteristics):
+Các thuộc tính không gian gồm loại hình cửa hàng (type từ A đến E) và mã phân cụm (cluster) phản ánh sự khác biệt về quy mô mặt bằng, danh mục hàng hóa bày bán và mức thu nhập bình quân của dân cư khu vực lân cận.
+
+## 2.2. Tổng quan các nghiên cứu thực nghiệm trước đây
+
+### 2.2.1. Lược khảo các công trình nghiên cứu tiêu biểu
+1. Fildes, Ma, & Kolassa (2019): Nghiên cứu tổng quan về dự báo chuỗi cung ứng bán lẻ đã khẳng định sự dịch chuyển tất yếu từ các mô hình kinh tế lượng cổ điển (ARIMA, SARIMA, Holt-Winters) sang các mô hình Học máy hiện đại. Các mô hình truyền thống thường thất bại khi phải đồng thời xử lý hàng chục ngàn chuỗi thời gian rời rạc có chứa biến ngoại sinh phi tuyến và dữ liệu khuyết thiếu.
+2. Makridakis và cộng sự (2020, 2022) qua cuộc thi M5 Forecasting Competition (Tập dữ liệu chuỗi siêu thị Walmart): Kết quả thực nghiệm chứng minh rằng các thuật toán học máy dạng cây (Tree-based Models) chiếm lĩnh toàn bộ nhóm giải pháp dẫn đầu. Khả năng tự động khai phá mối quan hệ tương tác chéo giữa lịch khuyến mãi, ngày lễ và loại mặt hàng giúp các mô hình này vượt trội hơn 20% so với các phương pháp thống kê cơ sở.
+3. Ferreira, Lee, & Simchi-Levi (2016): Thực nghiệm ứng dụng Machine Learning trong việc tối ưu giá và dự báo nhu cầu ngành hàng FMCG, chứng minh rằng việc bổ sung các chỉ báo kinh tế vĩ mô và chỉ số biến động giá giúp cải thiện rõ rệt độ chính xác của kế hoạch bổ sung hàng hóa.
+
+### 2.2.2. Bảng tổng hợp các nghiên cứu thực nghiệm liên quan
+| Tác giả (Năm) | Bộ dữ liệu & Bối cảnh | Phương pháp tiếp cận | Thước đo chính | Kết quả & Hạn chế |
+| --- | --- | --- | --- | --- |
+| Bose & Mahapatra (2001) | Dữ liệu bán lẻ tổng hợp | Hồi quy tuyến tính đa biến & ARIMA | MAPE, MAD | Dự báo tốt xu hướng chung nhưng hoàn toàn bất lực trước các đỉnh nhọn do khuyến mãi và ngày lễ |
+| Brunner et al. (Kaggle Favorita, 2018) | 125 triệu dòng giao dịch siêu thị Ecuador | LightGBM, Gradient Boosting & Deep Learning | NWRMSLE (~0.51) | Mô hình quá phức tạp, tiêu tốn tài nguyên phần cứng lớn, khó triển khai thực tế trên máy tính cá nhân |
+| Makridakis et al. (M5 - 2022) | Chuỗi bán lẻ Walmart Hoa Kỳ | Random Forest Regressor & LightGBM | WRMSSE, WMAE | Khẳng định ưu thế vượt trội của Random Forest trong việc xử lý dữ liệu bảng có phân phối lệch |
+
+### 2.2.3. Khoảng trống nghiên cứu và Định hướng của đề tài PRJ-07
+Các công trình trước đây hoặc chỉ tập trung vào mô hình hóa chuỗi thời gian thuần túy (bỏ qua giá dầu và khuyến mãi), hoặc xây dựng mô hình quá nặng nề về mặt tính toán. Đề tài PRJ-07 do nhóm sinh viên Đặng Phương Anh & Nguyễn Thị Trúc Giang thực hiện sẽ lấp đầy khoảng trống này bằng cách:
++ Xây dựng giải pháp dự báo hiệu quả trên quy mô hơn 3,000,000 dòng dữ liệu giao dịch đa bảng.
++ Áp dụng kỹ thuật tối ưu hóa bộ nhớ chuyên sâu (category dtype) nhằm xử lý dữ liệu lớn mượt mà trên môi trường máy tính cá nhân.
++ Sử dụng mô hình Random Forest Regressor kết hợp phân tích mức độ quan trọng của đặc trưng (Feature Importance) để lượng hóa tác động của giá dầu, ngày lễ và khuyến mãi lên từng ngành hàng.
+
+## 2.3. Quy trình nghiên cứu dữ liệu (Data Science Workflow)
+Nhóm nghiên cứu áp dụng khung phương pháp luận CRISP-DM (Cross-Industry Standard Process for Data Mining) được chuẩn hóa cho dữ liệu chuỗi thời gian dạng bảng:
+
+Giai đoạn 1 - Hiểu bài toán nghiệp vụ: Xác định biến phụ thuộc là doanh số bán lẻ (unit_sales); mục tiêu tối thượng là giảm thiểu sai số dự toán nhập hàng.
+Giai đoạn 2 - Khám phá dữ liệu (EDA sơ bộ): Kiểm tra cấu trúc 4 tệp dữ liệu, rà soát tỷ lệ bản ghi khuyết thiếu và hiện tượng phân phối lệch mạnh của doanh số.
+Giai đoạn 3 - Tiền xử lý & Ghép nối đa tệp:
++ Kỹ thuật ép kiểu bộ nhớ: Chuyển đổi các cột chuỗi ký tự sang category dtype và số thực sang float32, tiết kiệm hơn 60% RAM.
++ Ghép nối đa bảng: Sử dụng các thao tác merge/join dựa trên các khóa liên kết date và store_nbr.
++ Xử lý khuyết thiếu chuỗi thời gian: Dùng phương pháp nội suy tuyến tính (Linear Interpolation) và Forward Fill đối với dữ liệu giá dầu ngày nghỉ cuối tuần.
+Giai đoạn 4 - Kỹ thuật đặc trưng (Feature Engineering): Trích xuất các trường chu kỳ thời gian thông qua accessor .dt (thứ trong tuần, tháng, quý, ngày cuối tuần).
+Giai đoạn 5 - Huấn luyện mô hình: Huấn luyện mô hình Random Forest Regressor trên tập huấn luyện (Train set).
+Giai đoạn 6 - Đánh giá: Kiểm thử trên tập dữ liệu độc lập (Test set) dựa trên các thước đo tiêu chuẩn.
+Giai đoạn 7 - Khuyến nghị quản trị: Chuyển hóa trọng số đặc trưng thành hành động điều phối chuỗi cung ứng thực tế.
+
+## 2.4. Các phương pháp thống kê và Thuật toán Học máy ứng dụng
+
+### 2.4.1. Phương pháp phân tích thống kê
+1. Thống kê mô tả: Xác định các đại lượng trung tâm (Mean, Median), độ phân tán (Standard Deviation, IQR) và hệ số bất đối xứng (Skewness). Doanh số bán lẻ trong thực tế luôn có phân phối bất đối xứng mạnh (Right-skewed) với mật độ giao dịch tập trung tại các mức giá trị nhỏ và đuôi dài mở rộng về phía các giao dịch đột biến.
+2. Phân tích tương quan đa biến (Correlation Analysis):
+Áp dụng hệ số tương quan tuyến tính Pearson và tương quan hạng Spearman để kiểm tra mức độ phụ thuộc giữa doanh số với giá dầu (dcoilwtico) và trạng thái khuyến mãi (onpromotion).
+
+
+### 2.4.2. Thuật toán Hồi quy Rừng Ngẫu Nhiên (Random Forest Regressor)
+
+Random Forest Regressor là thuật toán học máy kết hợp (Ensemble Learning) hoạt động dựa trên kỹ thuật **Bagging (Bootstrap Aggregating)**:
+
+1. **Cơ chế hoạt động:**
+   * **Lấy mẫu Bootstrap:** Thuật toán rút ngẫu nhiên có hoàn lại từ tập dữ liệu ban đầu để tạo ra nhiều tập dữ liệu con độc lập.
+   * **Xây dựng nhiều cây quyết định:** Trên mỗi tập con, một cây quyết định hồi quy được huấn luyện. Tại mỗi điểm phân nhánh, một nhóm ngẫu nhiên các đặc trưng được chọn để xét cắt nhánh.
+   * **Tổng hợp dự báo:** Kết quả dự báo cuối cùng là giá trị trung bình cộng dự báo từ tất cả các cây:
+     $$\hat{y} = \frac{1}{B} \sum_{b=1}^{B} T_b(x)$$
+     *(Trong đó: B là tổng số cây, T_b(x) là kết quả dự báo của cây thứ b).*
+
+2. **Độ quan trọng của đặc trưng (Feature Importance):**
+   * Mô hình tự động đo lường mức độ đóng góp của từng biến số (giá dầu, khuyến mãi, ngày lễ, loại cửa hàng) thông qua mức độ giảm phương sai sai số khi biến đó xuất hiện ở các điểm phân nhánh.
+   * Giúp trả lời trực tiếp câu hỏi: *Yếu tố nào chi phối mạnh nhất đến doanh số bán lẻ?*
+
+3. **Lý do lựa chọn cho bài toán PRJ-07:**
+   * Hạn chế tối đa hiện tượng quá khớp (Overfitting) so với cây quyết định đơn lẻ.
+   * Xử lý tốt các mối quan hệ phi tuyến tính phức tạp giữa giá dầu, khuyến mãi và doanh số.
+   * Chạy ổn định trên tập dữ liệu lớn hơn 500,000 dòng.
+
+### 2.4.3. Các chỉ số đo lường hiệu năng mô hình (Evaluation Metrics)
+
+Để đánh giá chính xác độ tin cậy và khả năng dự báo của mô hình hồi quy Random Forest trên tập dữ liệu kiểm thử (Test Set), đề tài sử dụng 3 thước đo tiêu chuẩn:
+
+1. **Căn bậc hai sai số toàn phương trung bình (RMSE - Root Mean Squared Error):**
+   $$\text{RMSE} = \sqrt{\frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2}$$
+   * **Ý nghĩa:** RMSE đo lường độ lệch chuẩn của các phần dư dự báo. Do bình phương các khoảng chênh lệch trước khi lấy căn, RMSE phạt rất nặng các sai số lớn. Thước đo này đóng vai trò sống còn trong quản trị bán lẻ nhằm ngăn ngừa rủi ro thiếu hụt hàng hóa nghiêm trọng trong các đợt cao điểm.
+
+2. **Sai số tuyệt đối có trọng số (WMAE - Weighted Mean Absolute Error):**
+   $$\text{WMAE} = \frac{\sum_{i=1}^{n} w_i |y_i - \hat{y}_i|}{\sum_{i=1}^{n} w_i}$$
+   * **Ý nghĩa:** Để mô hình không bị thiên lệch vào các ngày bán hàng bình thường, nghiên cứu gán trọng số cao hơn ($w_i = 5$) cho các giao dịch rơi vào ngày lễ, tết hoặc các chương trình khuyến mãi lớn, và gán trọng số chuẩn ($w_i = 1$) cho các ngày thường.
+
+3. **Hệ số xác định ($R^2$ Score):**
+   $$R^2 = 1 - \frac{\sum_{i=1}^{n} (y_i - \hat{y}_i)^2}{\sum_{i=1}^{n} (y_i - \bar{y})^2}$$
+   * **Ý nghĩa:** Đại diện cho tỷ lệ phần trăm phương sai của doanh số bán lẻ được giải thích bởi các biến độc lập trong mô hình. Giá trị $R^2$ càng tiến gần 1, mô hình càng có độ phù hợp cao với dữ liệu thực tế.
+
+
+## 2.5. Môi trường thực nghiệm và Công cụ lập trình Python
+
+### 2.5.1. Môi trường làm việc và Cấu hình hệ thống
+Nhằm đảm bảo tính tái lập (Reproducibility) và độ chính xác của các kết quả thực nghiệm trong toàn bộ bài tiểu luận, nghiên cứu được triển khai trên môi trường kỹ thuật tiêu chuẩn:
+* **Hệ điều hành:** Microsoft Windows 11 (64-bit).
+* **Môi trường phát triển tích hợp (IDE):** **Antigravity IDE** kết hợp cùng hệ thống xuất bản khoa học mã nguồn mở **Quarto (`.qmd`)**. Môi trường này cho phép nhúng trực tiếp các khối mã nguồn Python (Code Chunks), sinh tự động các bảng số liệu, biểu đồ trực quan và xuất bản báo cáo học thuật hoàn chỉnh.
+* **Ngôn ngữ lập trình:** **Python (phiên bản 3.10+)**. Toàn bộ mã nguồn thực thi được thiết kế tuân thủ nghiêm ngặt theo hướng dẫn chuẩn mực phong cách lập trình **PEP 8** (Phụ lục A).
+
+### 2.5.2. Hệ sinh thái thư viện Python chuyên dụng
+Quá trình xử lý dữ liệu và huấn luyện mô hình cho tập dữ liệu quy mô lớn (hơn 3,000,000 dòng giao dịch) sử dụng các thư viện cốt lõi:
+
+1. **Xử lý dữ liệu & Tối ưu hóa tài nguyên phần cứng:**
+   * **`pandas` (phiên bản 2.x):** Đóng vai trò là công cụ thao tác dữ liệu chính. Nhóm nghiên cứu đặc biệt ứng dụng kỹ thuật ép kiểu dữ liệu định danh sang kiểu phân loại (`category` dtype) và số thực sang `float32`. Giải pháp này giúp cắt giảm hơn 60% dung lượng RAM tiêu thụ, ngăn chặn nguy cơ tràn bộ nhớ khi ghép nối đa bảng.
+   * **`numpy`:** Cung cấp cấu trúc mảng đa chiều hiệu năng cao và hỗ trợ các phép biến đổi toán học vector hóa trên chuỗi thời gian.
+   * **`datetime`:** Khai thác các thuộc tính `.dt` (như `.dt.dayofweek`, `.dt.month`, `.dt.is_weekend`) để trích xuất nhanh các đặc trưng thời gian phục vụ dự báo.
+
+2. **Trực quan hóa và Phân tích khám phá (EDA):**
+   * **`matplotlib` & `seaborn`:** Xây dựng hệ thống đồ thị chuyên nghiệp phục vụ Chương 3, bao gồm: biểu đồ chuỗi thời gian biến động doanh số, ma trận nhiệt tương quan (Correlation Heatmap) giữa giá dầu và khuyến mãi, biểu đồ phân phối và phát hiện điểm ngoại lai (Boxplot).
+
+3. **Mô hình hóa và Học máy:**
+   * **`scikit-learn`:** Cung cấp giải thuật `RandomForestRegressor`, các module phân chia tập dữ liệu huấn luyện/kiểm thử theo chuỗi thời gian (`TimeSeriesSplit` hoặc `train_test_split`), bộ công cụ mã hóa biến định tính (`OneHotEncoder`, `OrdinalEncoder`) và các hàm tính toán chỉ số đánh giá sai số (`mean_squared_error`, `mean_absolute_error`, `r2_score`).

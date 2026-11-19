@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Comparison & Business Dashboard - PRJ-07</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #212529;
+        }
+
+        .header-box {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: white;
+            padding: 24px 30px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-pills .nav-link {
+            border-radius: 10px;
+            padding: 10px 22px;
+            font-weight: 600;
+            color: #495057;
+            background: white;
+            margin-right: 10px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: #2a9d8f;
+            color: white;
+            box-shadow: 0 4px 12px rgba(42, 157, 143, 0.35);
+        }
+
+        .kpi-card {
+            border: none;
+            border-radius: 12px;
+            padding: 18px 20px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            height: 100%;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-custom {
+            border: none;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .pill-before {
+            background-color: #ffebee;
+            color: #c62828;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .pill-after {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-method {
+            background-color: #e3f2fd;
+            color: #1565c0;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .badge-lift {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body class="p-3 p-md-4">
+
+    <div class="container-fluid max-w-1400">
+
+        <!-- Header Section -->
+        <div class="header-box d-flex flex-wrap justify-content-between align-items-center">
+            <div>
+                <div class="badge bg-warning text-dark px-3 py-1 mb-2 fw-bold text-uppercase">
+                    <i class="bi bi-stars me-1"></i> Unified Master Dashboard - PRJ-07
+                </div>
+                <h3 class="fw-bold mb-1">HỆ THỐNG ĐIỀU KHIỂN BÁN LẺ & KIỂM TOÁN CHẤT LƯỢNG DỮ LIỆU</h3>
+                <p class="mb-0 opacity-75">Tích hợp toàn diện: Đối Soát Kỹ Thuật (Trước vs. Sau Làm Sạch) & Phân Tích
+                    Nghiệp Vụ Chuỗi Siêu Thị Corporación Favorita</p>
+            </div>
+            <div class="text-md-end mt-3 mt-md-0">
+                <span class="badge bg-light text-dark px-3 py-2 fs-6"><i class="bi bi-people-fill me-1"></i>Nhóm 13:
+                    Đặng Phương Anh & Nguyễn Thị Trúc Giang</span>
+                <div class="small opacity-75 mt-1">Dữ liệu thực nghiệm: 100,000 dòng (Chương 3 c3.qmd)</div>
+            </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-pills mb-4" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="cleaning-tab" data-bs-toggle="pill" data-bs-target="#tab-cleaning"
+                    type="button" role="tab">
+                    <i class="bi bi-arrow-left-right me-2"></i>1. Đối Soát Dữ Liệu: TRƯỚC vs. SAU Làm Sạch
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="business-tab" data-bs-toggle="pill" data-bs-target="#tab-business"
+                    type="button" role="tab">
+                    <i class="bi bi-speedometer2 me-2"></i>2. Báo Cáo Kinh Doanh & Insight Thực Nghiệm
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="matrix-tab" data-bs-toggle="pill" data-bs-target="#tab-matrix"
+                    type="button" role="tab">
+                    <i class="bi bi-table me-2"></i>3. Ma Trận Bù Khuyết Chi Tiết (16 Cột Gốc)
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Contents -->
+        <div class="tab-content" id="dashboardTabContent">
+
+            <!-- ========================================== -->
+            <!-- TAB 1: TRƯỚC VS SAU LÀM SẠCH               -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade show active" id="tab-cleaning" role="tabpanel">
+
+                <!-- 5 KPI Cards: Before vs After -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card">
+                            <div class="text-muted small fw-semibold text-uppercase mb-2"><i
+                                    class="bi bi-exclamation-triangle-fill text-danger me-1"></i>Ô Khuyết & Rác</div>
+                            <div class="d-flex align-items-baseline mb-2"><span class="pill-before me-2">Trước: 546,478
+                                    ô (54.6%)</span></div>
+                            <div class="d-flex align-items-baseline"><span class="pill-after">Sau: 0 ô (100%
+                                    Sạch)</span></div>
+                            <div class="progress mt-3" style="height: 6px;">
+                                <div class="progress-bar bg-success" style="width: 100%;"></div>
+                            </div>
+                            <div class="small text-muted mt-2">Đạt chuẩn cho toàn bộ 16 cột</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card">
+                            <div class="text-muted small fw-semibold text-uppercase mb-2"><i
+                                    class="bi bi-memory text-primary me-1"></i>Bộ Nhớ RAM Tiêu Thụ</div>
+                            <div class="d-flex align-items-baseline mb-2"><span class="pill-before me-2">Trước: 12.21 MB
+                                    (object)</span></div>
+                            <div class="d-flex align-items-baseline"><span class="pill-after">Sau: 3.91 MB
+                                    (category)</span></div>
+                            <div class="progress mt-3" style="height: 6px;">
+                                <div class="progress-bar bg-primary" style="width: 68%;"></div>
+                            </div>
+                            <div class="small text-success fw-bold mt-2"><i
+                                    class="bi bi-arrow-down-circle-fill me-1"></i>Tiết kiệm 68.0% RAM</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card">
+                            <div class="text-muted small fw-semibold text-uppercase mb-2"><i
+                                    class="bi bi-diagram-3-fill text-warning me-1"></i>Quy Mô Dòng Fact</div>
+                            <div class="d-flex align-items-baseline mb-2"><span class="pill-before me-2">Nguy cơ:
+                                    124,500 dòng ảo</span></div>
+                            <div class="d-flex align-items-baseline"><span class="pill-after">Chuẩn: 100,000 dòng</span>
+                            </div>
+                            <div class="progress mt-3" style="height: 6px;">
+                                <div class="progress-bar bg-warning" style="width: 100%;"></div>
+                            </div>
+                            <div class="small text-muted mt-2">Chặn bùng nổ Cartesian Explosion</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card">
+                            <div class="text-muted small fw-semibold text-uppercase mb-2"><i
+                                    class="bi bi-bug-fill text-danger me-1"></i>Ngoại Lai & Dị Biệt</div>
+                            <div class="d-flex align-items-baseline mb-2"><span class="pill-before me-2">Trước: 6,122
+                                    lỗi</span></div>
+                            <div class="d-flex align-items-baseline"><span class="pill-after">Sau: 0 lỗi</span></div>
+                            <div class="progress mt-3" style="height: 6px;">
+                                <div class="progress-bar bg-danger" style="width: 100%;"></div>
+                            </div>
+                            <div class="small text-muted mt-2">Sửa 2,428 âm, cụm 1500, đơn vị kg</div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card">
+                            <div class="text-muted small fw-semibold text-uppercase mb-2"><i
+                                    class="bi bi-heart-pulse-fill text-success me-1"></i>Độ Sạch Toàn Diện</div>
+                            <div class="d-flex align-items-baseline mb-2"><span class="pill-before me-2">Trước:
+                                    45.4%</span></div>
+                            <div class="d-flex align-items-baseline"><span class="pill-after">Sau: 100.0%</span></div>
+                            <div class="progress mt-3" style="height: 6px;">
+                                <div class="progress-bar bg-success" style="width: 100%;"></div>
+                            </div>
+                            <div class="small text-success fw-bold mt-2"><i class="bi bi-check-all me-1"></i>Sẵn sàng
+                                100% cho Model</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row 1: Missing Bars + Oil Continuity Comparison -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-lg-7">
+                        <div class="card-custom">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-steps me-2 text-danger"></i>Đối Soát
+                                    Ô Khuyết & Dữ Liệu Rác Theo Thuộc Tính</h5>
+                                <span class="badge bg-light text-muted border">Số ô khuyết</span>
+                            </div>
+                            <div style="height: 320px;">
+                                <canvas id="missingBarChart"></canvas>
+                            </div>
+                            <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>Màu đỏ là số ô
+                                khuyết ban đầu. Màu xanh lá là trạng thái sau khi điền Mốt, Forward-fill và Regex (tất
+                                cả về 0).</div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-5">
+                        <div class="card-custom">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0"><i class="bi bi-graph-up me-2 text-warning"></i>Chuỗi Giá Dầu
+                                    WTI: Trước vs. Sau Nội Suy</h5>
+                                <span class="badge bg-light text-muted border">Interpolation</span>
+                            </div>
+                            <div style="height: 320px;">
+                                <canvas id="oilCompareChart"></canvas>
+                            </div>
+                            <div class="small text-muted mt-2"><i class="bi bi-info-circle me-1"></i>Đường chấm đỏ bị
+                                đứt gãy vào các ngày nghỉ cuối tuần (69,638 ô khuyết). Đường liền xanh đã nội suy chuỗi
+                                liên tục.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visual Preview: Raw Sample vs Clean Sample -->
+                <div class="row g-4">
+                    <div class="col-12 col-lg-6">
+                        <div class="card-custom border-start border-4 border-danger">
+                            <h6 class="fw-bold text-danger mb-2"><i class="bi bi-x-octagon-fill me-2"></i>Mẫu Dữ Liệu
+                                THÔ BAN ĐẦU (Chưa Làm Sạch - 4 File CSV)</h6>
+                            <div class="small text-muted mb-3">Chứa nhiều dị thường: số âm, đơn vị thừa, khoảng trắng,
+                                định dạng ngày sai lệch</div>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered table-striped small align-middle">
+                                    <thead class="table-danger">
+                                        <tr>
+                                            <th>id</th>
+                                            <th>date</th>
+                                            <th>sales</th>
+                                            <th>onpromotion</th>
+                                            <th>cluster</th>
+                                            <th>dcoilwtico</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1024</td>
+                                            <td>2013/01/01</td>
+                                            <td class="text-danger fw-bold">-15.50</td>
+                                            <td>0 kg</td>
+                                            <td>13 USD</td>
+                                            <td>NaN</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1025</td>
+                                            <td>2013/01/01</td>
+                                            <td>0,0 %</td>
+                                            <td>?</td>
+                                            <td class="text-danger fw-bold">1500.0</td>
+                                            <td>-1.0</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1026</td>
+                                            <td>NaN</td>
+                                            <td class="text-danger fw-bold">9999.0</td>
+                                            <td>NaN</td>
+                                            <td>4 VND</td>
+                                            <td>9999</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1027</td>
+                                            <td>2013-01-02</td>
+                                            <td>142.0</td>
+                                            <td>5 kg</td>
+                                            <td>8 đ</td>
+                                            <td>93.12</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-6">
+                        <div class="card-custom border-start border-4 border-success">
+                            <h6 class="fw-bold text-success mb-2"><i class="bi bi-check-circle-fill me-2"></i>Mẫu Dữ
+                                Liệu SAU KHI LÀM SẠCH (Bảng Master Dataset 16 Cột)</h6>
+                            <div class="small text-muted mb-3">Đã chuẩn hóa kiểu dữ liệu, loại bỏ đơn vị thừa, lấp đầy
+                                khuyết thiếu và ép kiểu tối ưu RAM</div>
+                            <div class="table-responsive">
+                                <table class="table table-sm table-bordered table-striped small align-middle">
+                                    <thead class="table-success">
+                                        <tr>
+                                            <th>id</th>
+                                            <th>date</th>
+                                            <th>sales (float32)</th>
+                                            <th>onpromotion (int16)</th>
+                                            <th>cluster (int8)</th>
+                                            <th>dcoilwtico (float32)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1024</td>
+                                            <td>2013-01-01</td>
+                                            <td class="text-success fw-bold">0.00</td>
+                                            <td>0</td>
+                                            <td>13</td>
+                                            <td>93.12</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1025</td>
+                                            <td>2013-01-01</td>
+                                            <td class="text-success fw-bold">0.00</td>
+                                            <td>0</td>
+                                            <td class="text-success fw-bold">15</td>
+                                            <td>93.12</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1026</td>
+                                            <td>2013-01-01</td>
+                                            <td class="text-success fw-bold">0.00</td>
+                                            <td>0</td>
+                                            <td>4</td>
+                                            <td>93.12</td>
+                                        </tr>
+                                        <tr>
+                                            <td>1027</td>
+                                            <td>2013-01-02</td>
+                                            <td>142.00</td>
+                                            <td>5</td>
+                                            <td>8</td>
+                                            <td>93.12</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 2: BÁO CÁO KINH DOANH & INSIGHT        -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="tab-business" role="tabpanel">
+
+                <!-- Business KPI Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 text-primary p-3 rounded-3 me-3 fs-3"><i
+                                    class="bi bi-cart-check-fill"></i></div>
+                            <div>
+                                <div class="text-muted small fw-semibold text-uppercase">Tổng Sản Lượng</div>
+                                <div class="fs-4 fw-bold">54.32 Triệu</div>
+                                <div class="small text-muted">TB: 543.2 sp/lượt</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card d-flex align-items-center">
+                            <div class="bg-danger bg-opacity-10 text-danger p-3 rounded-3 me-3 fs-3"><i
+                                    class="bi bi-fuel-pump-fill"></i></div>
+                            <div>
+                                <div class="text-muted small fw-semibold text-uppercase">Giá Dầu WTI TB</div>
+                                <div class="fs-4 fw-bold">$95.07 /thùng</div>
+                                <div class="small text-muted">Biên độ: $92.6 - $97.7</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card d-flex align-items-center">
+                            <div class="bg-success bg-opacity-10 text-success p-3 rounded-3 me-3 fs-3"><i
+                                    class="bi bi-gift-fill"></i></div>
+                            <div>
+                                <div class="text-muted small fw-semibold text-uppercase">Bùng Nổ Ngày Lễ</div>
+                                <div class="fs-4 fw-bold text-success">+117.3%</div>
+                                <div class="small text-muted">548.0 sp vs 252.1 sp</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card d-flex align-items-center">
+                            <div class="bg-warning bg-opacity-10 text-warning p-3 rounded-3 me-3 fs-3"><i
+                                    class="bi bi-graph-up-arrow"></i></div>
+                            <div>
+                                <div class="text-muted small fw-semibold text-uppercase">Tăng Cuối Tuần</div>
+                                <div class="fs-4 fw-bold text-warning">+70.3%</div>
+                                <div class="small text-muted">Weekend Lift Effect</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-xl">
+                        <div class="kpi-card d-flex align-items-center">
+                            <div class="bg-info bg-opacity-10 text-info p-3 rounded-3 me-3 fs-3"><i
+                                    class="bi bi-geo-alt-fill"></i></div>
+                            <div>
+                                <div class="text-muted small fw-semibold text-uppercase">Thị Phần Quito</div>
+                                <div class="fs-4 fw-bold">35.18%</div>
+                                <div class="small text-muted">795.6 sp/lượt (Top 1)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts: Dual Time Series + City Bar Chart -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-lg-7">
+                        <div class="card-custom">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0"><i class="bi bi-activity me-2 text-primary"></i>Biến Động Chuỗi
+                                    Thời Gian Kép: Doanh Số vs. Giá Dầu WTI</h5>
+                                <span class="badge bg-light text-muted border">Tháng 01/2013</span>
+                            </div>
+                            <div style="height: 320px;">
+                                <canvas id="dualAxisChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-5">
+                        <div class="card-custom">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-fill me-2 text-success"></i>Sản Lượng
+                                    Bán Bình Quân Theo Đô Thị</h5>
+                                <span class="badge bg-light text-muted border">6 Thành phố lớn</span>
+                            </div>
+                            <div style="height: 320px;">
+                                <canvas id="cityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weekend Effect Table + Hypotheses Summary -->
+                <div class="row g-4">
+                    <div class="col-12 col-lg-7">
+                        <div class="card-custom">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-shop me-2 text-warning"></i>Phân Tích Hiệu Ứng Cuối
+                                Tuần Theo 5 Mô Hình Cửa Hàng</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Mô hình</th>
+                                            <th>Ngày thường</th>
+                                            <th>Cuối tuần</th>
+                                            <th>Tăng trưởng</th>
+                                            <th>Định vị</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="fw-bold text-primary">Type A</td>
+                                            <td>812.4 sp</td>
+                                            <td class="fw-bold">1,260.5 sp</td>
+                                            <td><span class="badge-lift">+55.2%</span></td>
+                                            <td>Trọng điểm gia đình</td>
+                                        </tr>
+                                        <tr class="table-warning bg-opacity-25">
+                                            <td class="fw-bold text-danger">Type B</td>
+                                            <td>175.1 sp</td>
+                                            <td class="fw-bold text-danger">3,717.7 sp</td>
+                                            <td><span class="badge bg-danger">+2,023% (x21 lần)</span></td>
+                                            <td>Bùng nổ mua sắm cuối tuần</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-secondary">Type C</td>
+                                            <td>194.8 sp</td>
+                                            <td>241.6 sp</td>
+                                            <td><span class="badge-lift">+24.0%</span></td>
+                                            <td>Nhu yếu phẩm cơ bản</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-success">Type D</td>
+                                            <td>323.1 sp</td>
+                                            <td class="fw-bold">662.2 sp</td>
+                                            <td><span class="badge bg-success">+105.0% (Gấp đôi)</span></td>
+                                            <td>Đón khách nhanh khu dân cư</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="fw-bold text-muted">Type E</td>
+                                            <td>108.5 sp</td>
+                                            <td>162.8 sp</td>
+                                            <td><span class="badge-lift">+50.0%</span></td>
+                                            <td>Phủ sóng ngoại thành</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-5">
+                        <div class="card-custom">
+                            <h5 class="fw-bold mb-3"><i class="bi bi-shield-check me-2 text-info"></i>Kết Quả 3 Kiểm
+                                Định Giả Thuyết Thống Kê (Mục 3.6)</h5>
+                            <div class="border rounded p-3 mb-2 bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">1. Hiệu ứng Cuối tuần (Weekend)</span>
+                                    <span class="badge bg-secondary">p = 0.2835</span>
+                                </div>
+                                <div class="small text-muted mt-1">Welch t-test: Doanh số cuối tuần cao hơn +70.3% trên
+                                    thực tế, nhưng phương sai lớn do bán buôn.</div>
+                            </div>
+                            <div class="border rounded p-3 mb-2 bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">2. Phân hóa Địa bàn (Quito vs. Guayaquil)</span>
+                                    <span class="badge bg-success">p = 0.0812 (&alpha;=0.10)</span>
+                                </div>
+                                <div class="small text-muted mt-1">Welch t-test: Thủ đô Quito cao hơn +57.6% (có ý nghĩa
+                                    thống kê), phản ánh lợi thế "sân nhà".</div>
+                            </div>
+                            <div class="border rounded p-3 bg-light">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold">3. Phân tầng 5 Mô hình (ANOVA Type A-E)</span>
+                                    <span class="badge bg-danger">p = 0.0000 (***)</span>
+                                </div>
+                                <div class="small text-muted mt-1">One-Way ANOVA: Bác bỏ H0, xác nhận Type B (1,187 sp)
+                                    và Type A (913 sp) phân hóa vượt trội.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 3: MA TRẬN BÙ KHUYẾT 16 CỘT            -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="tab-matrix" role="tabpanel">
+                <div class="card-custom">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="fw-bold mb-1"><i class="bi bi-table me-2 text-info"></i>Ma Trận Bù Khuyết & Chuẩn
+                                Hóa Toàn Diện 16 Cột Gốc (Master Imputation Matrix)</h5>
+                            <p class="text-muted small mb-0">Bảng đối soát chi tiết trạng thái từng thuộc tính trước và
+                                sau quy trình làm sạch tập trung tại Mục 3.3 tệp c3.qmd</p>
+                        </div>
+                        <span class="badge bg-success px-3 py-2 fs-6 mt-2 mt-md-0"><i
+                                class="bi bi-check-circle-fill me-1"></i>16 / 16 Thuộc tính Hoàn Hảo</span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên Cột Thuộc Tính</th>
+                                    <th>Nguồn Gốc Tệp CSV</th>
+                                    <th>Hiện Trạng TRƯỚC Làm Sạch</th>
+                                    <th>Phương Pháp Xử Lý & Chuẩn Hóa</th>
+                                    <th>Ô Thiếu SAU</th>
+                                    <th>Trạng Thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-center fw-bold">1</td>
+                                    <td class="fw-bold"><code>id</code></td>
+                                    <td>Tệp 4 (Sales)</td>
+                                    <td><span class="text-success fw-semibold">0 ô khuyết (0.00%)</span></td>
+                                    <td><span class="badge-method">Primary Key, giữ nguyên vẹn</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">2</td>
+                                    <td class="fw-bold"><code>date</code></td>
+                                    <td>Tệp 4 (Sales)</td>
+                                    <td><span class="text-danger fw-semibold">9,636 ô khuyết & rác /</span></td>
+                                    <td><span class="badge-method">Bỏ dấu /, Forward-fill chuỗi ngày</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">3</td>
+                                    <td class="fw-bold"><code>store_nbr</code></td>
+                                    <td>Tệp 4 (Sales)</td>
+                                    <td><span class="text-success fw-semibold">0 ô khuyết (0.00%)</span></td>
+                                    <td><span class="badge-method">Khóa ngoại FK, ép kiểu int8</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">4</td>
+                                    <td class="fw-bold"><code>family</code></td>
+                                    <td>Tệp 4 (Sales)</td>
+                                    <td><span class="text-danger fw-semibold">35,348 ô khuyết & rác (35.3%)</span></td>
+                                    <td><span class="badge-method">In hoa, điền Mốt (GROCERY I), category</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr class="table-warning bg-opacity-25">
+                                    <td class="text-center fw-bold">5</td>
+                                    <td class="fw-bold text-primary"><code>sales</code> (Target)</td>
+                                    <td>Tệp 4 (Sales)</td>
+                                    <td><span class="text-danger fw-semibold">13,892 ô khuyết, 2,428 số âm</span></td>
+                                    <td><span class="badge-method">Regex lọc số, âm &rarr; 0.0, float32</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">6</td>
+                                    <td class="fw-bold"><code>onpromotion</code></td>
+                                    <td>Tệp 4 (Sales)</td>
+                                    <td><span class="text-danger fw-semibold">10,775 ô khuyết & lẫn kg</span></td>
+                                    <td><span class="badge-method">Regex lọc số dương, điền 0, int16</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">7</td>
+                                    <td class="fw-bold"><code>city</code></td>
+                                    <td>Tệp 1 (Stores)</td>
+                                    <td><span class="text-danger fw-semibold">24,057 ô khuyết & chính tả</span></td>
+                                    <td><span class="badge-method">Cross-Imputation từ state + Mode</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">8</td>
+                                    <td class="fw-bold"><code>state</code></td>
+                                    <td>Tệp 1 (Stores)</td>
+                                    <td><span class="text-danger fw-semibold">14,817 ô khuyết & chính tả</span></td>
+                                    <td><span class="badge-method">Cross-Imputation từ city + Mode</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">9</td>
+                                    <td class="fw-bold"><code>store_type</code></td>
+                                    <td>Tệp 1 (Stores)</td>
+                                    <td><span class="text-danger fw-semibold">48,180 ô khuyết & rác (48.2%)</span></td>
+                                    <td><span class="badge-method">Chuẩn hóa in hoa, điền Mốt (Type C)</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr class="table-warning bg-opacity-25">
+                                    <td class="text-center fw-bold">10</td>
+                                    <td class="fw-bold"><code>cluster</code></td>
+                                    <td>Tệp 1 (Stores)</td>
+                                    <td><span class="text-danger fw-semibold">3,696 ô khuyết + ngoại lai 1500</span>
+                                    </td>
+                                    <td><span class="badge-method">Sửa 1500 &rarr; 15, điền Trung vị = 8</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">11</td>
+                                    <td class="fw-bold"><code>dcoilwtico</code></td>
+                                    <td>Tệp 3 (Oil)</td>
+                                    <td><span class="text-danger fw-semibold">69,638 ô khuyết (ngày nghỉ)</span></td>
+                                    <td><span class="badge-method">Lọc biên 0&lt;P&le;200, Forward/Back-fill</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">12</td>
+                                    <td class="fw-bold"><code>holiday_type</code></td>
+                                    <td>Tệp 2 (Holidays)</td>
+                                    <td><span class="text-danger fw-semibold">98,218 ô khuyết sau Left Join</span></td>
+                                    <td><span class="badge-method">Mode Imputation (Điền: Holiday)</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">13</td>
+                                    <td class="fw-bold"><code>locale</code></td>
+                                    <td>Tệp 2 (Holidays)</td>
+                                    <td><span class="text-danger fw-semibold">98,218 ô khuyết sau Left Join</span></td>
+                                    <td><span class="badge-method">Mode Imputation (Điền: National)</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">14</td>
+                                    <td class="fw-bold"><code>locale_name</code></td>
+                                    <td>Tệp 2 (Holidays)</td>
+                                    <td><span class="text-danger fw-semibold">98,218 ô khuyết sau Left Join</span></td>
+                                    <td><span class="badge-method">Mode Imputation (Điền: Ecuador)</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">15</td>
+                                    <td class="fw-bold"><code>description</code></td>
+                                    <td>Tệp 2 (Holidays)</td>
+                                    <td><span class="text-danger fw-semibold">98,218 ô khuyết sau Left Join</span></td>
+                                    <td><span class="badge-method">Mode Imputation (Điền: Holiday)</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center fw-bold">16</td>
+                                    <td class="fw-bold"><code>transferred</code></td>
+                                    <td>Tệp 2 (Holidays)</td>
+                                    <td><span class="text-danger fw-semibold">98,218 ô khuyết sau Left Join</span></td>
+                                    <td><span class="badge-method">Mode Imputation (Điền: False, boolean)</span></td>
+                                    <td class="text-center fw-bold text-success">0</td>
+                                    <td><span class="badge bg-success">Đạt chuẩn 100%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Interactive Chart.js Scripts -->
+    <script>
+        // 1. Missing Values Bar Chart (Horizontal)
+        const columns = [
+            'transferred', 'description', 'locale_name', 'locale', 'holiday_type',
+            'dcoilwtico', 'store_type', 'family', 'city', 'state', 'sales', 'onpromotion', 'date', 'cluster'
+        ];
+        const missingBefore = [98218, 98218, 98218, 98218, 98218, 69638, 48180, 35348, 24057, 14817, 13892, 10775, 9636, 3696];
+        const missingAfter = new Array(columns.length).fill(0);
+
+        new Chart(document.getElementById('missingBarChart'), {
+            type: 'bar',
+            data: {
+                labels: columns,
+                datasets: [
+                    {
+                        label: 'Trước Khi Làm Sạch (Số ô khuyết & rác)',
+                        data: missingBefore,
+                        backgroundColor: 'rgba(231, 111, 81, 0.85)',
+                        borderColor: '#e76f51',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Sau Khi Làm Sạch (Ô khuyết còn lại = 0)',
+                        data: missingAfter,
+                        backgroundColor: 'rgba(42, 157, 143, 0.9)',
+                        borderColor: '#2a9d8f',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { title: { display: true, text: 'Số lượng ô dữ liệu khuyết / bất thường' }, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    y: { grid: { display: false } }
+                },
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.raw.toLocaleString()} ô` } }
+                }
+            }
+        });
+
+        // 2. Oil Price Continuity: Before (Missing holes) vs After (Interpolated)
+        const oilDays = Array.from({ length: 20 }, (_, i) => `Ngày ${i + 1}`);
+        const oilRaw = [93.1, 92.9, null, null, 94.2, 94.5, null, 95.1, 95.3, null, null, 95.0, 95.4, null, 96.2, 96.5, null, null, 96.3, 96.7];
+        const oilClean = [93.1, 92.9, 93.3, 93.7, 94.2, 94.5, 94.8, 95.1, 95.3, 95.2, 95.1, 95.0, 95.4, 95.8, 96.2, 96.5, 96.4, 96.3, 96.3, 96.7];
+
+        new Chart(document.getElementById('oilCompareChart'), {
+            type: 'line',
+            data: {
+                labels: oilDays,
+                datasets: [
+                    {
+                        label: 'Trước: Đứt gãy ngày nghỉ (Khuyết)',
+                        data: oilRaw,
+                        borderColor: '#e76f51',
+                        backgroundColor: '#e76f51',
+                        borderDash: [5, 5],
+                        pointRadius: 5,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Sau: Nội suy chuỗi liên tục (ffill/bfill)',
+                        data: oilClean,
+                        borderColor: '#2a9d8f',
+                        backgroundColor: 'rgba(42, 157, 143, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 2.5,
+                        pointRadius: 0
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { min: 92, max: 98, title: { display: true, text: 'Giá Dầu WTI ($/thùng)' } }
+                }
+            }
+        });
+
+        // 3. Dual Axis Chart: Sales vs Oil (Business Tab)
+        const days = Array.from({ length: 31 }, (_, i) => `Ngày ${i + 1}`);
+        const salesData = [1.2, 1.1, 1.3, 1.4, 2.8, 3.2, 2.1, 1.1, 1.0, 1.3, 1.5, 2.9, 3.5, 2.0, 1.3, 1.2, 1.4, 1.6, 3.1, 3.6, 2.2, 1.2, 1.1, 1.3, 1.5, 3.0, 3.4, 2.1, 1.3, 1.2, 1.4];
+        const oilData = [93.1, 92.9, 93.4, 93.8, 94.2, 94.5, 94.8, 95.1, 95.3, 94.9, 94.7, 95.0, 95.4, 95.8, 96.2, 96.5, 96.1, 95.9, 96.3, 96.7, 97.1, 96.8, 96.5, 96.2, 96.0, 95.8, 96.1, 96.4, 96.9, 97.3, 97.5];
+
+        new Chart(document.getElementById('dualAxisChart'), {
+            type: 'line',
+            data: {
+                labels: days,
+                datasets: [
+                    {
+                        label: 'Sản lượng Bán lẻ (Triệu sp)',
+                        data: salesData,
+                        borderColor: '#2a9d8f',
+                        backgroundColor: 'rgba(42, 157, 143, 0.1)',
+                        yAxisID: 'ySales',
+                        tension: 0.3,
+                        fill: true,
+                        borderWidth: 2.5
+                    },
+                    {
+                        label: 'Giá dầu thô WTI ($/thùng)',
+                        data: oilData,
+                        borderColor: '#e76f51',
+                        borderDash: [5, 5],
+                        yAxisID: 'yOil',
+                        tension: 0.2,
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    ySales: { type: 'linear', position: 'left', title: { display: true, text: 'Sản lượng (Triệu sp)' }, min: 0, max: 4.5 },
+                    yOil: { type: 'linear', position: 'right', title: { display: true, text: 'Giá Dầu WTI ($)' }, min: 90, max: 100, grid: { drawOnChartArea: false } }
+                }
+            }
+        });
+
+        // 4. City Bar Chart
+        new Chart(document.getElementById('cityChart'), {
+            type: 'bar',
+            data: {
+                labels: ['Quito', 'Machala', 'Guayaquil', 'Cuenca', 'Sto Domingo', 'Latacunga'],
+                datasets: [{
+                    label: 'Sản lượng TB (sp/lượt)',
+                    data: [795.6, 448.6, 376.5, 276.2, 274.6, 140.1],
+                    backgroundColor: ['#2a9d8f', '#457b9d', '#e76f51', '#a8dadc', '#f4a261', '#b7b7a4'],
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, title: { display: true, text: 'Sản phẩm / lượt bán' } } }
+            }
+        });
+    </script>
+
+</body>
+
+</html>
